@@ -1,0 +1,62 @@
+name: CI — Lint, Test, Type Check
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install ruff
+        run: pip install ruff
+      - name: Run ruff linter
+        run: ruff check . --fix --output-format=github
+
+  test:
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          pip install -r serving/requirements.txt
+          pip install pytest pytest-cov pytest-mock prophet tensorflow shap pykrige evidently
+      - name: Run tests with coverage
+        env:
+          KAFKA_ENABLED: "false"
+          OPENAQ_API_KEY: "test_key"
+          AQICN_TOKEN: "test_token"
+          MLFLOW_TRACKING_URI: "http://localhost:5000"
+          REDIS_HOST: "localhost"
+        run: |
+          pytest --cov=. --cov-report=xml --cov-report=term-missing -x
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.xml
+
+  type-check:
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          pip install -r serving/requirements.txt
+          pip install mypy types-requests
+      - name: Run mypy
+        run: mypy serving/ models/ ingestion/ --ignore-missing-imports
