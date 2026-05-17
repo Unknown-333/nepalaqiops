@@ -1,5 +1,6 @@
 """
 Airflow DAG: Feature Engineering — computes rolling, lag, calendar, and spatial features.
+Waits for ingestion DAG to complete before writing to DuckDB (avoids single-writer lock).
 """
 
 import sys
@@ -9,6 +10,7 @@ from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.operators.python import PythonOperator
+from airflow.sensors.external_task import ExternalTaskSensor
 
 default_args = {
     "owner": "nepalaqiops",
@@ -147,6 +149,17 @@ def write_feature_store(**kwargs):
 
 
 # Task definitions
+wait_for_ingestion = ExternalTaskSensor(
+    task_id="wait_for_ingestion",
+    external_dag_id="ingest_aqi_dag",
+    external_task_id="persist_to_datalake",
+    execution_delta=timedelta(0),  # Same schedule interval
+    timeout=600,
+    poke_interval=30,
+    mode="reschedule",
+    dag=dag,
+)
+
 t1 = PythonOperator(
     task_id="compute_rolling_features",
     python_callable=compute_rolling_features,
@@ -171,4 +184,4 @@ t4 = PythonOperator(
     dag=dag,
 )
 
-[t1, t2, t3] >> t4
+wait_for_ingestion >> [t1, t2, t3] >> t4
