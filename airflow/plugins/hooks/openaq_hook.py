@@ -2,6 +2,9 @@
 Airflow Hook: OpenAQ v3 API connection hook.
 """
 
+import sys
+sys.path.insert(0, "/opt/airflow")
+
 from airflow.hooks.base import BaseHook
 
 from ingestion.openaq_client import OpenAQClient

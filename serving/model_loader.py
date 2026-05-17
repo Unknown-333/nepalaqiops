@@ -127,6 +127,9 @@ class ModelStore:
             else:
                 logger.warning(f"Redis unavailable, no cached data for {station_id}, using default=50.0")
 
+        # Determine if we have a real trained model or are using fallback
+        has_trained_model = self.champion_model is not None
+
         # Generate predictions in thread pool to avoid blocking event loop
         predictions = await run_in_threadpool(self._generate_forecast, last_pm25, hours)
 
@@ -135,7 +138,11 @@ class ModelStore:
         lower = predictions - 1.96 * std_estimate
         upper = predictions + 1.96 * std_estimate
 
-        model_used = model_type if model_type != "auto" else "ensemble"
+        # Report honestly whether this is a trained model or fallback
+        if has_trained_model:
+            model_used = model_type if model_type != "auto" else "ensemble"
+        else:
+            model_used = "fallback_diurnal"
 
         result = {
             "predictions": predictions.tolist(),

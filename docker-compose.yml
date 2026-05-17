@@ -7,6 +7,8 @@
 x-airflow-common: &airflow-common
   image: apache/airflow:2.9.1
   environment:
+    - PYTHONPATH=/opt/airflow
+    - _PIP_ADDITIONAL_REQUIREMENTS=duckdb==1.0.0 pandas redis requests confluent-kafka
     - AIRFLOW__CORE__SQL_ALCHEMY_CONN=${AIRFLOW__CORE__SQL_ALCHEMY_CONN}
     - AIRFLOW__CORE__EXECUTOR=${AIRFLOW__CORE__EXECUTOR}
     - AIRFLOW__CORE__FERNET_KEY=${AIRFLOW__CORE__FERNET_KEY}
@@ -57,12 +59,13 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+      KAFKA_OPTS: "-Dzookeeper.4lw.commands.whitelist=ruok,srvr,stat"
     volumes:
       - zookeeper-data:/var/lib/zookeeper/data
     networks:
       - nepalaqiops
     healthcheck:
-      test: ["CMD-SHELL", "echo ruok | nc localhost 2181 | grep imok"]
+      test: ["CMD-SHELL", "echo srvr | nc localhost 2181 | grep Zookeeper"]
       interval: 10s
       timeout: 5s
       retries: 5

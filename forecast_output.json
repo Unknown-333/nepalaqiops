@@ -1,0 +1,176 @@
+﻿{
+    "station_id":  "aqicn_kathmandu",
+    "generated_at":  "2026-05-17T08:37:01.701649+00:00",
+    "forecasts":  [
+                      {
+                          "hour":  "2026-05-17T09:37:01.701649+00:00",
+                          "pm25_predicted":  66.94,
+                          "aqi_category":  "Unhealthy",
+                          "confidence_lower":  52.24,
+                          "confidence_upper":  81.64
+                      },
+                      {
+                          "hour":  "2026-05-17T10:37:01.701649+00:00",
+                          "pm25_predicted":  65.82,
+                          "aqi_category":  "Unhealthy",
+                          "confidence_lower":  51.12,
+                          "confidence_upper":  80.52
+                      },
+                      {
+                          "hour":  "2026-05-17T11:37:01.701649+00:00",
+                          "pm25_predicted":  65.15,
+                          "aqi_category":  "Unhealthy",
+                          "confidence_lower":  50.45,
+                          "confidence_upper":  79.85
+                      },
+                      {
+                          "hour":  "2026-05-17T12:37:01.701649+00:00",
+                          "pm25_predicted":  55.13,
+                          "aqi_category":  "USG",
+                          "confidence_lower":  40.43,
+                          "confidence_upper":  69.83
+                      },
+                      {
+                          "hour":  "2026-05-17T13:37:01.701649+00:00",
+                          "pm25_predicted":  60.29,
+                          "aqi_category":  "Unhealthy",
+                          "confidence_lower":  45.59,
+                          "confidence_upper":  74.99
+                      },
+                      {
+                          "hour":  "2026-05-17T14:37:01.701649+00:00",
+                          "pm25_predicted":  55.7,
+                          "aqi_category":  "Unhealthy",
+                          "confidence_lower":  41.0,
+                          "confidence_upper":  70.4
+                      },
+                      {
+                          "hour":  "2026-05-17T15:37:01.701649+00:00",
+                          "pm25_predicted":  45.72,
+                          "aqi_category":  "USG",
+                          "confidence_lower":  31.02,
+                          "confidence_upper":  60.42
+                      },
+                      {
+                          "hour":  "2026-05-17T16:37:01.701649+00:00",
+                          "pm25_predicted":  44.47,
+                          "aqi_category":  "USG",
+                          "confidence_lower":  29.77,
+                          "confidence_upper":  59.17
+                      },
+                      {
+                          "hour":  "2026-05-17T17:37:01.701649+00:00",
+                          "pm25_predicted":  46.42,
+                          "aqi_category":  "USG",
+                          "confidence_lower":  31.72,
+                          "confidence_upper":  61.12
+                      },
+                      {
+                          "hour":  "2026-05-17T18:37:01.701649+00:00",
+                          "pm25_predicted":  36.55,
+                          "aqi_category":  "USG",
+                          "confidence_lower":  21.85,
+                          "confidence_upper":  51.25
+                      },
+                      {
+                          "hour":  "2026-05-17T19:37:01.701649+00:00",
+                          "pm25_predicted":  34.96,
+                          "aqi_category":  "Moderate",
+                          "confidence_lower":  20.26,
+                          "confidence_upper":  49.66
+                      },
+                      {
+                          "hour":  "2026-05-17T20:37:01.701649+00:00",
+                          "pm25_predicted":  37.75,
+                          "aqi_category":  "USG",
+                          "confidence_lower":  23.05,
+                          "confidence_upper":  52.45
+                      },
+                      {
+                          "hour":  "2026-05-17T21:37:01.701649+00:00",
+                          "pm25_predicted":  44.5,
+                          "aqi_category":  "USG",
+                          "confidence_lower":  29.8,
+                          "confidence_upper":  59.2
+                      },
+                      {
+                          "hour":  "2026-05-17T22:37:01.701649+00:00",
+                          "pm25_predicted":  39.26,
+                          "aqi_category":  "USG",
+                          "confidence_lower":  24.56,
+                          "confidence_upper":  53.96
+                      },
+                      {
+                          "hour":  "2026-05-17T23:37:01.701649+00:00",
+                          "pm25_predicted":  43.99,
+                          "aqi_category":  "USG",
+                          "confidence_lower":  29.29,
+                          "confidence_upper":  58.69
+                      },
+                      {
+                          "hour":  "2026-05-18T00:37:01.701649+00:00",
+                          "pm25_predicted":  47.76,
+                          "aqi_category":  "USG",
+                          "confidence_lower":  33.06,
+                          "confidence_upper":  62.46
+                      },
+                      {
+                          "hour":  "2026-05-18T01:37:01.701649+00:00",
+                          "pm25_predicted":  54.11,
+                          "aqi_category":  "USG",
+                          "confidence_lower":  39.41,
+                          "confidence_upper":  68.81
+                      },
+                      {
+                          "hour":  "2026-05-18T02:37:01.701649+00:00",
+                          "pm25_predicted":  54.11,
+                          "aqi_category":  "USG",
+                          "confidence_lower":  39.41,
+                          "confidence_upper":  68.81
+                      },
+                      {
+                          "hour":  "2026-05-18T03:37:01.701649+00:00",
+                          "pm25_predicted":  63.48,
+                          "aqi_category":  "Unhealthy",
+                          "confidence_lower":  48.78,
+                          "confidence_upper":  78.18
+                      },
+                      {
+                          "hour":  "2026-05-18T04:37:01.701649+00:00",
+                          "pm25_predicted":  66.97,
+                          "aqi_category":  "Unhealthy",
+                          "confidence_lower":  52.27,
+                          "confidence_upper":  81.67
+                      },
+                      {
+                          "hour":  "2026-05-18T05:37:01.701649+00:00",
+                          "pm25_predicted":  71.01,
+                          "aqi_category":  "Unhealthy",
+                          "confidence_lower":  56.31,
+                          "confidence_upper":  85.71
+                      },
+                      {
+                          "hour":  "2026-05-18T06:37:01.701649+00:00",
+                          "pm25_predicted":  74.14,
+                          "aqi_category":  "Unhealthy",
+                          "confidence_lower":  59.44,
+                          "confidence_upper":  88.84
+                      },
+                      {
+                          "hour":  "2026-05-18T07:37:01.701649+00:00",
+                          "pm25_predicted":  70.21,
+                          "aqi_category":  "Unhealthy",
+                          "confidence_lower":  55.51,
+                          "confidence_upper":  84.91
+                      },
+                      {
+                          "hour":  "2026-05-18T08:37:01.701649+00:00",
+                          "pm25_predicted":  75.12,
+                          "aqi_category":  "Unhealthy",
+                          "confidence_lower":  60.42,
+                          "confidence_upper":  89.82
+                      }
+                  ],
+    "model_used":  "ensemble",
+    "model_version":  "champion"
+}

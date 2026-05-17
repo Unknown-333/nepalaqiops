@@ -28,6 +28,7 @@ class ForecastResponse(BaseModel):
     """Response model for forecast endpoint with output validation."""
     station_id: str
     generated_at: str
+    timezone: str = "UTC"
     forecasts: list[ForecastPoint]
     model_used: str
     model_version: str
@@ -102,6 +103,7 @@ async def get_forecast(
         return {
             "station_id": station_id,
             "generated_at": now.isoformat(),
+            "timezone": "UTC",
             "forecasts": forecasts,
             "model_used": forecast_result.get("model_used", model),
             "model_version": model_version,
