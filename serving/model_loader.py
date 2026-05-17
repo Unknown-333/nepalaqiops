@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI", "http://mlflow:5000")
 
 # In-memory fallback cache for predictions when Redis is down
-_prediction_cache = FallbackCache(max_size=256, ttl_seconds=600)
+_prediction_cache = FallbackCache(maxsize=256, default_ttl=600)
 
 
 class ModelStore:
