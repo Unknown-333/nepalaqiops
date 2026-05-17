@@ -7,6 +7,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 from fastapi import APIRouter, Request, Header, Query, HTTPException
+from pydantic import BaseModel, Field
 import numpy as np
 
 router = APIRouter()
@@ -14,7 +15,25 @@ router = APIRouter()
 AQI_CATEGORIES = ["Good", "Moderate", "USG", "Unhealthy", "Very Unhealthy", "Hazardous"]
 
 
-@router.get("/{station_id}")
+class ForecastPoint(BaseModel):
+    """Single forecast data point with validated bounds."""
+    hour: str
+    pm25_predicted: float = Field(ge=0.0, le=500.0)
+    aqi_category: str
+    confidence_lower: float = Field(ge=0.0)
+    confidence_upper: float = Field(le=1000.0)
+
+
+class ForecastResponse(BaseModel):
+    """Response model for forecast endpoint with output validation."""
+    station_id: str
+    generated_at: str
+    forecasts: list[ForecastPoint]
+    model_used: str
+    model_version: str
+
+
+@router.get("/{station_id}", response_model=ForecastResponse)
 async def get_forecast(
     station_id: str,
     request: Request,
@@ -46,6 +65,9 @@ async def get_forecast(
     use_challenger = x_model_version == "challenger"
     model_version = "challenger" if use_challenger else "champion"
 
+    # Get Redis pool from app state
+    redis_pool = getattr(request.app.state, "redis_pool", None)
+
     try:
         # Generate forecast
         forecast_result = await model_store.predict(
@@ -53,21 +75,24 @@ async def get_forecast(
             hours=hours,
             model_type=model,
             use_challenger=use_challenger,
+            redis_pool=redis_pool,
         )
 
-        # Build response
+        # Build response with clamped bounds
         now = datetime.now(timezone.utc)
         forecasts = []
         for i in range(min(hours, len(forecast_result["predictions"]))):
-            pm25_pred = float(forecast_result["predictions"][i])
+            pm25_pred = max(0.0, min(500.0, float(forecast_result["predictions"][i])))
             category_idx = _pm25_to_category_idx(pm25_pred)
-            forecasts.append({
-                "hour": (now + timedelta(hours=i + 1)).isoformat(),
-                "pm25_predicted": round(pm25_pred, 2),
-                "aqi_category": AQI_CATEGORIES[category_idx],
-                "confidence_lower": round(float(forecast_result.get("lower", [pm25_pred * 0.7])[i] if i < len(forecast_result.get("lower", [])) else pm25_pred * 0.7), 2),
-                "confidence_upper": round(float(forecast_result.get("upper", [pm25_pred * 1.3])[i] if i < len(forecast_result.get("upper", [])) else pm25_pred * 1.3), 2),
-            })
+            lower_val = max(0.0, float(forecast_result.get("lower", [pm25_pred * 0.7])[i] if i < len(forecast_result.get("lower", [])) else pm25_pred * 0.7))
+            upper_val = min(1000.0, float(forecast_result.get("upper", [pm25_pred * 1.3])[i] if i < len(forecast_result.get("upper", [])) else pm25_pred * 1.3))
+            forecasts.append(ForecastPoint(
+                hour=(now + timedelta(hours=i + 1)).isoformat(),
+                pm25_predicted=round(pm25_pred, 2),
+                aqi_category=AQI_CATEGORIES[category_idx],
+                confidence_lower=round(lower_val, 2),
+                confidence_upper=round(upper_val, 2),
+            ))
 
         # Record metrics
         latency = time.time() - start_time
@@ -97,11 +122,15 @@ async def get_heatmap(request: Request):
     import json
     import redis
 
-    redis_host = os.getenv("REDIS_HOST", "redis")
-    redis_port = int(os.getenv("REDIS_PORT", "6379"))
+    redis_pool = getattr(request.app.state, "redis_pool", None)
 
     try:
-        r = redis.Redis(host=redis_host, port=redis_port, decode_responses=True)
+        if redis_pool:
+            r = redis.Redis(connection_pool=redis_pool)
+        else:
+            redis_host = os.getenv("REDIS_HOST", "redis")
+            redis_port = int(os.getenv("REDIS_PORT", "6379"))
+            r = redis.Redis(host=redis_host, port=redis_port, decode_responses=True)
 
         # Build GeoJSON from cached ward features
         features = []

@@ -1,6 +1,7 @@
 """
 Model Loader — loads champion and challenger models from MLflow registry.
 Caches models in memory for fast inference.
+Includes FallbackCache for resilience when Redis/MLflow are unreachable.
 """
 
 import os
@@ -11,9 +12,14 @@ from typing import Any
 
 import numpy as np
 
+from serving.hardening import FallbackCache
+
 logger = logging.getLogger(__name__)
 
 MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI", "http://mlflow:5000")
+
+# In-memory fallback cache for predictions when Redis is down
+_prediction_cache = FallbackCache(max_size=256, ttl_seconds=600)
 
 
 class ModelStore:
@@ -79,33 +85,47 @@ class ModelStore:
         hours: int = 24,
         model_type: str = "auto",
         use_challenger: bool = False,
+        redis_pool=None,
     ) -> dict[str, Any]:
         """
         Generate PM2.5 forecast using loaded models.
 
         Falls back to statistical baseline if no trained model is available.
+        Uses FallbackCache when Redis is unreachable.
         """
         import asyncio
         from starlette.concurrency import run_in_threadpool
 
+        cache_key = f"{station_id}:{hours}:{model_type}"
+
         # Try to get recent data from Redis for informed prediction
+        last_pm25 = 50.0
         try:
             import redis
             import json
 
-            r = redis.Redis(
-                host=os.getenv("REDIS_HOST", "redis"),
-                port=int(os.getenv("REDIS_PORT", "6379")),
-                decode_responses=True,
-            )
+            if redis_pool:
+                r = redis.Redis(connection_pool=redis_pool)
+            else:
+                r = redis.Redis(
+                    host=os.getenv("REDIS_HOST", "redis"),
+                    port=int(os.getenv("REDIS_PORT", "6379")),
+                    decode_responses=True,
+                )
             cached = r.get(f"features:{station_id}:latest")
             if cached:
                 features = json.loads(cached)
                 last_pm25 = features.get("pm25", 50.0) or 50.0
-            else:
-                last_pm25 = 50.0
+                # Cache the feature value for fallback
+                _prediction_cache.set(f"last_pm25:{station_id}", last_pm25)
         except Exception:
-            last_pm25 = 50.0
+            # Redis unreachable — use cached value
+            cached_pm25 = _prediction_cache.get(f"last_pm25:{station_id}")
+            if cached_pm25 is not None:
+                last_pm25 = cached_pm25
+                logger.warning(f"Redis unavailable, using cached PM2.5={last_pm25} for {station_id}")
+            else:
+                logger.warning(f"Redis unavailable, no cached data for {station_id}, using default=50.0")
 
         # Generate predictions in thread pool to avoid blocking event loop
         predictions = await run_in_threadpool(self._generate_forecast, last_pm25, hours)
@@ -117,12 +137,16 @@ class ModelStore:
 
         model_used = model_type if model_type != "auto" else "ensemble"
 
-        return {
+        result = {
             "predictions": predictions.tolist(),
             "lower": np.maximum(lower, 0).tolist(),
             "upper": upper.tolist(),
             "model_used": model_used,
         }
+
+        # Cache prediction result for fallback
+        _prediction_cache.set(cache_key, result)
+        return result
 
     def _generate_forecast(self, last_value: float, hours: int) -> np.ndarray:
         """

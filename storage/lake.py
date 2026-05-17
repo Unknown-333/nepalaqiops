@@ -1,9 +1,12 @@
 """
 Data Lake Abstraction — DuckDB + Parquet storage layer.
 Provides ACID-like transactions on Parquet files without Spark overhead.
+Includes exponential backoff for DuckDB lock contention.
 """
 
 import os
+import time
+import random
 import logging
 from datetime import datetime, timezone
 from pathlib import Path
@@ -16,6 +19,11 @@ logger = logging.getLogger(__name__)
 
 DATALAKE_PATH = os.getenv("DATALAKE_PATH", "/opt/airflow/datalake")
 
+# DuckDB lock retry configuration
+DUCKDB_MAX_RETRIES = int(os.getenv("DUCKDB_MAX_RETRIES", "5"))
+DUCKDB_BASE_DELAY = float(os.getenv("DUCKDB_BASE_DELAY", "1.0"))
+DUCKDB_MAX_DELAY = float(os.getenv("DUCKDB_MAX_DELAY", "30.0"))
+
 
 class DataLake:
     """DuckDB + Parquet data lake for NepalAQI-Ops."""
@@ -27,8 +35,43 @@ class DataLake:
         self._init_database()
 
     def _get_connection(self) -> duckdb.DuckDBPyConnection:
-        """Get a DuckDB connection."""
+        """Get a DuckDB connection with retry on lock contention."""
         return duckdb.connect(self._db_path)
+
+    def _execute_with_retry(self, operation, *args, **kwargs):
+        """
+        Execute a DuckDB operation with exponential backoff on lock errors.
+        
+        DuckDB is single-writer: concurrent Airflow tasks writing simultaneously
+        will get 'database is locked'. This retries with jittered backoff.
+        """
+        last_exception = None
+        for attempt in range(DUCKDB_MAX_RETRIES + 1):
+            con = self._get_connection()
+            try:
+                result = operation(con, *args, **kwargs)
+                return result
+            except (duckdb.IOException, duckdb.TransactionException) as e:
+                last_exception = e
+                if attempt == DUCKDB_MAX_RETRIES:
+                    logger.error(
+                        f"DuckDB write failed after {DUCKDB_MAX_RETRIES} retries: {e}"
+                    )
+                    raise
+
+                delay = min(DUCKDB_BASE_DELAY * (2 ** attempt), DUCKDB_MAX_DELAY)
+                jitter = random.uniform(0, delay * 0.2)
+                actual_delay = delay + jitter
+
+                logger.warning(
+                    f"DuckDB locked (attempt {attempt + 1}/{DUCKDB_MAX_RETRIES}): {e}. "
+                    f"Retrying in {actual_delay:.1f}s..."
+                )
+                time.sleep(actual_delay)
+            finally:
+                con.close()
+
+        raise last_exception
 
     def _init_database(self):
         """Initialize DuckDB database and create tables."""
@@ -117,12 +160,19 @@ class DataLake:
                 )
             """)
 
+            # Performance indexes for common query patterns
+            con.execute("CREATE INDEX IF NOT EXISTS idx_aqi_station_ts ON raw_aqi(station_id, timestamp_utc)")
+            con.execute("CREATE INDEX IF NOT EXISTS idx_aqi_ts ON raw_aqi(timestamp_utc)")
+            con.execute("CREATE INDEX IF NOT EXISTS idx_weather_ts ON raw_weather(timestamp_utc)")
+            con.execute("CREATE INDEX IF NOT EXISTS idx_features_station_ts ON features(station_id, timestamp_utc)")
+            con.execute("CREATE INDEX IF NOT EXISTS idx_features_ts ON features(timestamp_utc)")
+
             logger.info(f"DuckDB initialized at {self._db_path}")
         finally:
             con.close()
 
     def insert_aqi_readings(self, readings: list[dict[str, Any]]) -> int:
-        """Insert raw AQI readings into the data lake."""
+        """Insert raw AQI readings into the data lake with retry on lock."""
         if not readings:
             return 0
 
@@ -130,17 +180,16 @@ class DataLake:
         df["timestamp_utc"] = pd.to_datetime(df["timestamp_utc"], utc=True)
         df["ingested_at"] = datetime.now(timezone.utc)
 
-        con = self._get_connection()
-        try:
-            con.execute("INSERT INTO raw_aqi SELECT * FROM df")
-            count = len(df)
-            logger.info(f"Inserted {count} AQI readings into data lake")
-            return count
-        finally:
-            con.close()
+        def _do_insert(con, dataframe):
+            con.execute("INSERT INTO raw_aqi SELECT * FROM dataframe")
+            return len(dataframe)
+
+        count = self._execute_with_retry(_do_insert, df)
+        logger.info(f"Inserted {count} AQI readings into data lake")
+        return count
 
     def insert_weather_readings(self, readings: list[dict[str, Any]]) -> int:
-        """Insert raw weather readings into the data lake."""
+        """Insert raw weather readings into the data lake with retry on lock."""
         if not readings:
             return 0
 
@@ -148,39 +197,36 @@ class DataLake:
         df["timestamp_utc"] = pd.to_datetime(df["timestamp_utc"], utc=True)
         df["ingested_at"] = datetime.now(timezone.utc)
 
-        con = self._get_connection()
-        try:
-            con.execute("INSERT INTO raw_weather SELECT * FROM df")
-            count = len(df)
-            logger.info(f"Inserted {count} weather readings into data lake")
-            return count
-        finally:
-            con.close()
+        def _do_insert(con, dataframe):
+            con.execute("INSERT INTO raw_weather SELECT * FROM dataframe")
+            return len(dataframe)
+
+        count = self._execute_with_retry(_do_insert, df)
+        logger.info(f"Inserted {count} weather readings into data lake")
+        return count
 
     def insert_features(self, features_df: pd.DataFrame) -> int:
-        """Insert computed features into the data lake."""
+        """Insert computed features into the data lake with retry on lock."""
         if features_df.empty:
             return 0
 
         df = features_df.copy()
         df["computed_at"] = datetime.now(timezone.utc)
 
-        con = self._get_connection()
-        try:
-            con.execute("INSERT INTO features SELECT * FROM df")
-            count = len(df)
-            logger.info(f"Inserted {count} feature rows into data lake")
-            return count
-        finally:
-            con.close()
+        def _do_insert(con, dataframe):
+            con.execute("INSERT INTO features SELECT * FROM dataframe")
+            return len(dataframe)
+
+        count = self._execute_with_retry(_do_insert, df)
+        logger.info(f"Inserted {count} feature rows into data lake")
+        return count
 
     def query(self, sql: str) -> pd.DataFrame:
-        """Execute a SQL query and return results as DataFrame."""
-        con = self._get_connection()
-        try:
-            return con.execute(sql).fetchdf()
-        finally:
-            con.close()
+        """Execute a SQL query and return results as DataFrame with retry."""
+        def _do_query(con, query_sql):
+            return con.execute(query_sql).fetchdf()
+
+        return self._execute_with_retry(_do_query, sql)
 
     def get_aqi_data(
         self,

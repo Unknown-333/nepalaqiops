@@ -24,6 +24,11 @@ default_args = {
 PSI_RETRAIN_THRESHOLD = float(os.getenv("PSI_RETRAIN_THRESHOLD", "0.25"))
 RMSE_DEGRADATION_THRESHOLD = float(os.getenv("RMSE_DEGRADATION_THRESHOLD", "0.15"))
 
+# Festival-aware threshold multiplier: during known pollution events
+# (Tihar firecrackers, Dashain bonfires, brick kiln season), drift is EXPECTED.
+# Suppress false retrain triggers by relaxing thresholds.
+FESTIVAL_THRESHOLD_MULTIPLIER = float(os.getenv("FESTIVAL_THRESHOLD_MULTIPLIER", "2.0"))
+
 dag = DAG(
     "drift_monitor_dag",
     default_args=default_args,
@@ -90,16 +95,39 @@ def compute_rmse_drift(**kwargs):
 
 
 def check_drift_threshold(**kwargs):
-    """Branch: trigger retrain or log OK status."""
+    """
+    Branch: trigger retrain or log OK status.
+    
+    Festival-aware: during Tihar, Dashain, or brick kiln season,
+    drift is EXPECTED due to firecrackers/bonfires/kilns. We relax
+    the PSI threshold by FESTIVAL_THRESHOLD_MULTIPLIER to avoid
+    unnecessary retrains on known pollution events.
+    """
     ti = kwargs["ti"]
     max_psi = ti.xcom_pull(key="max_psi", task_ids="compute_psi")
     rmse_degraded = ti.xcom_pull(key="rmse_degraded", task_ids="compute_rmse_drift")
 
-    psi_drift = max_psi > PSI_RETRAIN_THRESHOLD
+    # Check if today falls within a known festival/event period
+    execution_date = kwargs.get("execution_date", datetime.now())
+    is_festival_period = _is_festival_or_event(execution_date)
+
+    # Adjust threshold for festivals
+    effective_psi_threshold = PSI_RETRAIN_THRESHOLD
+    if is_festival_period:
+        effective_psi_threshold = PSI_RETRAIN_THRESHOLD * FESTIVAL_THRESHOLD_MULTIPLIER
+        import logging
+        logging.getLogger(__name__).info(
+            f"Festival period detected ({execution_date.strftime('%Y-%m-%d')}). "
+            f"PSI threshold relaxed: {PSI_RETRAIN_THRESHOLD} → {effective_psi_threshold}"
+        )
+
+    psi_drift = max_psi > effective_psi_threshold
     should_retrain = psi_drift or rmse_degraded
 
     ti.xcom_push(key="should_retrain", value=should_retrain)
     ti.xcom_push(key="psi_drift", value=psi_drift)
+    ti.xcom_push(key="is_festival_period", value=is_festival_period)
+    ti.xcom_push(key="effective_threshold", value=effective_psi_threshold)
 
     if should_retrain:
         # Send drift alert
@@ -114,6 +142,40 @@ def check_drift_threshold(**kwargs):
         return "trigger_emergency_retrain"
     else:
         return "log_ok_status"
+
+
+def _is_festival_or_event(date) -> bool:
+    """
+    Check if the given date falls within a known Nepal festival/pollution event.
+    
+    Major events that cause legitimate PM2.5 drift:
+      - Tihar (Diwali): Oct-Nov, ~5 days of firecrackers
+      - Dashain: Sep-Oct, bonfires and cooking smoke
+      - Brick kiln season: Jan-Apr (industry fires)
+      - Indra Jatra: Sep, city-wide celebrations
+    
+    Note: Nepal uses Bikram Sambat calendar; these are approximate Gregorian ranges.
+    """
+    month = date.month
+    day = date.day
+
+    # Brick kiln season: January through mid-April
+    if month in (1, 2, 3) or (month == 4 and day <= 15):
+        return True
+
+    # Dashain: typically Oct 1-15 (approximate Gregorian)
+    if month == 10 and day <= 15:
+        return True
+
+    # Tihar: typically late Oct to early Nov
+    if (month == 10 and day >= 25) or (month == 11 and day <= 5):
+        return True
+
+    # Indra Jatra: typically September 1-10
+    if month == 9 and day <= 10:
+        return True
+
+    return False
 
 
 def log_ok_status(**kwargs):
