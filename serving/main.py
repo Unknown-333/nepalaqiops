@@ -42,7 +42,18 @@ app.include_router(anomaly.router, prefix="/anomalies", tags=["Anomalies"])
 
 @app.on_event("startup")
 async def startup_event():
-    """Load models on startup."""
+    """Load models and initialize connection pools on startup."""
+    import redis
+
+    # Initialize Redis connection pool (shared across all requests)
+    redis_pool = redis.ConnectionPool(
+        host=os.getenv("REDIS_HOST", "redis"),
+        port=int(os.getenv("REDIS_PORT", "6379")),
+        decode_responses=True,
+        max_connections=20,
+    )
+    app.state.redis_pool = redis_pool
+
     from serving.model_loader import ModelStore
     app.state.model_store = ModelStore()
     await app.state.model_store.load_models()
