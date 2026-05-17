@@ -80,17 +80,17 @@ cp .env.example .env
 docker compose up --build
 
 # 3. Verify
-curl http://localhost:8080/health
+curl http://localhost:8000/health
 ```
 
 ### Service URLs
 
 | Service | URL |
 |---------|-----|
-| FastAPI | http://localhost:8080 |
+| FastAPI | http://localhost:8000 |
 | Streamlit Dashboard | http://localhost:8501 |
 | MLflow | http://localhost:5000 |
-| Airflow | http://localhost:8081 |
+| Airflow | http://localhost:8080 |
 | Grafana | http://localhost:3000 |
 | Prometheus | http://localhost:9090 |
 | MinIO Console | http://localhost:9001 |
@@ -190,3 +190,13 @@ make down        # docker compose down -v
 - [ ] Fine-grained ward-level health advisories
 - [ ] Transformer-based model (PatchTST)
 - [ ] Real-time streaming inference via Kafka Streams
+
+## Known Limitations
+
+| Limitation | Impact | Mitigation |
+|-----------|--------|------------|
+| Single-node Kafka (replication factor 1) | Not fault-tolerant — broker crash loses unread messages | Acceptable for dev/demo; production would use RF=3 with 3 brokers |
+| DuckDB is single-writer | Concurrent Airflow tasks writing to the same DuckDB file cause lock contention | Serialize writes via task dependencies (`>>` operator); only one writer at a time |
+| PSI threshold may be conservative for binary features | Festival flags (`is_tihar`, `is_monsoon`) always flip to 1 during festivals, triggering false drift alerts | Exclude binary features from PSI computation; monitor them with simple change-point detection instead |
+| Kriging uses only 4-5 sensors for 32 wards | At the lower bound of Kriging validity; large kriging variance for distant wards | `kriging_variance` field quantifies uncertainty per ward; roadmap includes Sentinel-5P satellite AOD for 100+ grid cells |
+| No Kafka consumer process | Data persistence re-fetches APIs instead of consuming from Kafka topics | Kafka serves as audit log and decoupling layer; future iteration will add Faust/Kafka Streams consumer |
