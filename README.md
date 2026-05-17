@@ -67,20 +67,59 @@ graph TB
 
 - Docker & Docker Compose v2.20+
 - 8GB RAM minimum (16GB recommended)
-- Ports available: 8080, 8501, 9090, 3000, 9000, 5000
+- Ports available: 8000, 8080, 8501, 9090, 3000, 9000, 5000
 
 ## Quick Start
 
 ```bash
-# 1. Clone and configure
+# 1. Clone
+git clone https://github.com/Unknown-333/nepalaqiops.git
+cd nepalaqiops
+
+# 2. Configure environment
 cp .env.example .env
-# Edit .env with your API keys (OPENAQ_API_KEY, AQICN_TOKEN, TELEGRAM_BOT_TOKEN)
+# Edit .env — at minimum set these two API keys:
+#   AQICN_TOKEN=<get free at https://aqicn.org/data-platform/token/>
+#   OPENAQ_API_KEY=<get free at https://explore.openaq.org>
 
-# 2. Launch all services
-docker compose up --build
+# 3. Start all services (takes ~60-90 seconds on first run)
+docker compose up --build -d
 
-# 3. Verify
-curl http://localhost:8000/health
+# 4. Wait for all containers to become healthy
+docker compose ps   # all should show "healthy" or "running"
+
+# 5. Fix datalake permissions & unpause DAGs
+docker compose exec --user root airflow-scheduler chmod 777 /opt/airflow/datalake
+docker compose exec airflow-scheduler airflow dags unpause ingest_aqi_dag
+docker compose exec airflow-scheduler airflow dags unpause drift_monitor_dag
+
+# 6. Run first ingestion to seed data
+docker compose exec airflow-scheduler airflow tasks test ingest_aqi_dag persist_to_datalake $(date -u +%Y-%m-%d)
+
+# 7. Test the forecast API
+curl http://localhost:8000/forecast/aqicn_kathmandu_ratnapark
+```
+
+> **Windows users:** Replace `$(date -u +%Y-%m-%d)` with today's date, e.g. `2026-05-17`. Or use the startup script below.
+
+### One-Command Startup (after initial setup)
+
+```bash
+# Linux/Mac
+./scripts/start.sh
+
+# Windows PowerShell
+.\scripts\start.ps1
+```
+
+### Stop & Clean
+
+```bash
+# Stop services (keep data)
+docker compose down
+
+# Stop and wipe all data (full reset)
+docker compose down -v
 ```
 
 ### Service URLs
