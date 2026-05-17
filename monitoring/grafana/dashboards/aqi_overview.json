@@ -1,0 +1,93 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": { "unit": "short", "thresholds": { "steps": [
+          {"color": "green", "value": null},
+          {"color": "yellow", "value": 50},
+          {"color": "orange", "value": 100},
+          {"color": "red", "value": 150},
+          {"color": "purple", "value": 200},
+          {"color": "dark-red", "value": 300}
+        ]}}
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+      "title": "Current AQI by Station",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "nepalaqiops_current_aqi",
+          "legendFormat": "{{station}}"
+        }
+      ]
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "µg/m³" } },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+      "title": "PM2.5 Predictions vs Actual",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "nepalaqiops_pm25_predicted",
+          "legendFormat": "Predicted {{station}}"
+        },
+        {
+          "expr": "nepalaqiops_pm25_actual",
+          "legendFormat": "Actual {{station}}"
+        }
+      ]
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "s" } },
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+      "title": "API Prediction Latency (p95)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, rate(nepalaqiops_prediction_latency_seconds_bucket[5m]))",
+          "legendFormat": "p95 latency"
+        }
+      ]
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "short" } },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+      "title": "Predictions Total (rate/min)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "rate(nepalaqiops_predictions_total[5m]) * 60",
+          "legendFormat": "{{model}} - {{station}}"
+        }
+      ]
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 16},
+      "title": "Kafka Consumer Lag",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "kafka_consumergroup_lag",
+          "legendFormat": "{{consumergroup}} - {{topic}}"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": ["nepalaqiops", "aqi"],
+  "templating": { "list": [] },
+  "time": { "from": "now-6h", "to": "now" },
+  "title": "NepalAQI-Ops: AQI Overview",
+  "uid": "nepalaqiops-aqi-overview"
+}
