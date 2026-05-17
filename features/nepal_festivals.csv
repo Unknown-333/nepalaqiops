@@ -1,0 +1,253 @@
+date,festival_name,flag_column_name
+2020-01-01,New Year,is_public_holiday
+2020-01-11,Prithvi Narayan Shah Jayanti,is_public_holiday
+2020-01-29,Martyrs Day,is_public_holiday
+2020-02-19,National Democracy Day,is_public_holiday
+2020-03-08,International Women's Day,is_public_holiday
+2020-03-10,Maha Shivaratri,is_public_holiday
+2020-03-10,Holi,is_public_holiday
+2020-03-29,Ghode Jatra,is_public_holiday
+2020-04-14,Nepali New Year (Bikram Sambat),is_public_holiday
+2020-05-07,Buddha Jayanti,is_public_holiday
+2020-05-29,Republic Day,is_public_holiday
+2020-08-03,Janai Purnima,is_public_holiday
+2020-09-01,Indra Jatra,is_indra_jatra
+2020-10-17,Ghatasthapana (Dashain start),is_dashain
+2020-10-18,Dashain Day 2,is_dashain
+2020-10-19,Dashain Day 3,is_dashain
+2020-10-20,Dashain Day 4,is_dashain
+2020-10-21,Dashain Day 5,is_dashain
+2020-10-22,Dashain Day 6,is_dashain
+2020-10-23,Dashain Day 7 (Fulpati),is_dashain
+2020-10-24,Dashain Day 8 (Maha Ashtami),is_dashain
+2020-10-25,Dashain Day 9 (Maha Navami),is_dashain
+2020-10-26,Dashain Day 10 (Vijaya Dashami),is_dashain
+2020-10-27,Dashain Day 11,is_dashain
+2020-10-28,Dashain Day 12,is_dashain
+2020-10-29,Dashain Day 13,is_dashain
+2020-10-30,Dashain Day 14,is_dashain
+2020-10-31,Dashain Day 15,is_dashain
+2020-11-14,Tihar Day 1 (Kaag Tihar),is_tihar
+2020-11-15,Tihar Day 2 (Kukur Tihar),is_tihar
+2020-11-16,Tihar Day 3 (Laxmi Puja/Deepawali),is_tihar
+2020-11-17,Tihar Day 4 (Govardhan Puja),is_tihar
+2020-11-18,Tihar Day 5 (Bhai Tika),is_tihar
+2020-12-30,Tamu Lhosar,is_public_holiday
+2021-01-01,New Year,is_public_holiday
+2021-01-11,Prithvi Narayan Shah Jayanti,is_public_holiday
+2021-01-15,Maghe Sankranti,is_public_holiday
+2021-01-29,Martyrs Day,is_public_holiday
+2021-02-19,National Democracy Day,is_public_holiday
+2021-03-11,Maha Shivaratri,is_public_holiday
+2021-03-29,Holi,is_public_holiday
+2021-04-14,Nepali New Year,is_public_holiday
+2021-05-26,Buddha Jayanti,is_public_holiday
+2021-05-29,Republic Day,is_public_holiday
+2021-08-22,Janai Purnima,is_public_holiday
+2021-09-18,Indra Jatra,is_indra_jatra
+2021-10-07,Ghatasthapana (Dashain start),is_dashain
+2021-10-08,Dashain Day 2,is_dashain
+2021-10-09,Dashain Day 3,is_dashain
+2021-10-10,Dashain Day 4,is_dashain
+2021-10-11,Dashain Day 5,is_dashain
+2021-10-12,Dashain Day 6,is_dashain
+2021-10-13,Dashain Day 7 (Fulpati),is_dashain
+2021-10-14,Dashain Day 8 (Maha Ashtami),is_dashain
+2021-10-15,Dashain Day 9 (Maha Navami),is_dashain
+2021-10-16,Dashain Day 10 (Vijaya Dashami),is_dashain
+2021-10-17,Dashain Day 11,is_dashain
+2021-10-18,Dashain Day 12,is_dashain
+2021-10-19,Dashain Day 13,is_dashain
+2021-10-20,Dashain Day 14,is_dashain
+2021-10-21,Dashain Day 15,is_dashain
+2021-11-02,Tihar Day 1 (Kaag Tihar),is_tihar
+2021-11-03,Tihar Day 2 (Kukur Tihar),is_tihar
+2021-11-04,Tihar Day 3 (Laxmi Puja/Deepawali),is_tihar
+2021-11-05,Tihar Day 4 (Govardhan Puja),is_tihar
+2021-11-06,Tihar Day 5 (Bhai Tika),is_tihar
+2022-01-01,New Year,is_public_holiday
+2022-01-14,Maghe Sankranti,is_public_holiday
+2022-01-29,Martyrs Day,is_public_holiday
+2022-02-19,National Democracy Day,is_public_holiday
+2022-03-01,Maha Shivaratri,is_public_holiday
+2022-03-18,Holi,is_public_holiday
+2022-04-14,Nepali New Year,is_public_holiday
+2022-05-16,Buddha Jayanti,is_public_holiday
+2022-05-29,Republic Day,is_public_holiday
+2022-08-12,Janai Purnima,is_public_holiday
+2022-09-07,Indra Jatra,is_indra_jatra
+2022-09-26,Ghatasthapana (Dashain start),is_dashain
+2022-09-27,Dashain Day 2,is_dashain
+2022-09-28,Dashain Day 3,is_dashain
+2022-09-29,Dashain Day 4,is_dashain
+2022-09-30,Dashain Day 5,is_dashain
+2022-10-01,Dashain Day 6,is_dashain
+2022-10-02,Dashain Day 7 (Fulpati),is_dashain
+2022-10-03,Dashain Day 8 (Maha Ashtami),is_dashain
+2022-10-04,Dashain Day 9 (Maha Navami),is_dashain
+2022-10-05,Dashain Day 10 (Vijaya Dashami),is_dashain
+2022-10-06,Dashain Day 11,is_dashain
+2022-10-07,Dashain Day 12,is_dashain
+2022-10-08,Dashain Day 13,is_dashain
+2022-10-09,Dashain Day 14,is_dashain
+2022-10-10,Dashain Day 15,is_dashain
+2022-10-24,Tihar Day 1 (Kaag Tihar),is_tihar
+2022-10-25,Tihar Day 2 (Kukur Tihar),is_tihar
+2022-10-26,Tihar Day 3 (Laxmi Puja/Deepawali),is_tihar
+2022-10-27,Tihar Day 4 (Govardhan Puja),is_tihar
+2022-10-28,Tihar Day 5 (Bhai Tika),is_tihar
+2023-01-01,New Year,is_public_holiday
+2023-01-15,Maghe Sankranti,is_public_holiday
+2023-01-29,Martyrs Day,is_public_holiday
+2023-02-19,National Democracy Day,is_public_holiday
+2023-02-18,Maha Shivaratri,is_public_holiday
+2023-03-07,Holi,is_public_holiday
+2023-04-14,Nepali New Year,is_public_holiday
+2023-05-05,Buddha Jayanti,is_public_holiday
+2023-05-29,Republic Day,is_public_holiday
+2023-08-31,Janai Purnima,is_public_holiday
+2023-09-28,Indra Jatra,is_indra_jatra
+2023-10-15,Ghatasthapana (Dashain start),is_dashain
+2023-10-16,Dashain Day 2,is_dashain
+2023-10-17,Dashain Day 3,is_dashain
+2023-10-18,Dashain Day 4,is_dashain
+2023-10-19,Dashain Day 5,is_dashain
+2023-10-20,Dashain Day 6,is_dashain
+2023-10-21,Dashain Day 7 (Fulpati),is_dashain
+2023-10-22,Dashain Day 8 (Maha Ashtami),is_dashain
+2023-10-23,Dashain Day 9 (Maha Navami),is_dashain
+2023-10-24,Dashain Day 10 (Vijaya Dashami),is_dashain
+2023-10-25,Dashain Day 11,is_dashain
+2023-10-26,Dashain Day 12,is_dashain
+2023-10-27,Dashain Day 13,is_dashain
+2023-10-28,Dashain Day 14,is_dashain
+2023-10-29,Dashain Day 15,is_dashain
+2023-11-12,Tihar Day 1 (Kaag Tihar),is_tihar
+2023-11-13,Tihar Day 2 (Kukur Tihar),is_tihar
+2023-11-14,Tihar Day 3 (Laxmi Puja/Deepawali),is_tihar
+2023-11-15,Tihar Day 4 (Govardhan Puja),is_tihar
+2023-11-16,Tihar Day 5 (Bhai Tika),is_tihar
+2024-01-01,New Year,is_public_holiday
+2024-01-15,Maghe Sankranti,is_public_holiday
+2024-01-29,Martyrs Day,is_public_holiday
+2024-02-19,National Democracy Day,is_public_holiday
+2024-03-08,Maha Shivaratri,is_public_holiday
+2024-03-25,Holi,is_public_holiday
+2024-04-14,Nepali New Year,is_public_holiday
+2024-05-23,Buddha Jayanti,is_public_holiday
+2024-05-29,Republic Day,is_public_holiday
+2024-08-19,Janai Purnima,is_public_holiday
+2024-09-16,Indra Jatra,is_indra_jatra
+2024-10-03,Ghatasthapana (Dashain start),is_dashain
+2024-10-04,Dashain Day 2,is_dashain
+2024-10-05,Dashain Day 3,is_dashain
+2024-10-06,Dashain Day 4,is_dashain
+2024-10-07,Dashain Day 5,is_dashain
+2024-10-08,Dashain Day 6,is_dashain
+2024-10-09,Dashain Day 7 (Fulpati),is_dashain
+2024-10-10,Dashain Day 8 (Maha Ashtami),is_dashain
+2024-10-11,Dashain Day 9 (Maha Navami),is_dashain
+2024-10-12,Dashain Day 10 (Vijaya Dashami),is_dashain
+2024-10-13,Dashain Day 11,is_dashain
+2024-10-14,Dashain Day 12,is_dashain
+2024-10-15,Dashain Day 13,is_dashain
+2024-10-16,Dashain Day 14,is_dashain
+2024-10-17,Dashain Day 15,is_dashain
+2024-11-01,Tihar Day 1 (Kaag Tihar),is_tihar
+2024-11-02,Tihar Day 2 (Kukur Tihar),is_tihar
+2024-11-03,Tihar Day 3 (Laxmi Puja/Deepawali),is_tihar
+2024-11-04,Tihar Day 4 (Govardhan Puja),is_tihar
+2024-11-05,Tihar Day 5 (Bhai Tika),is_tihar
+2025-01-01,New Year,is_public_holiday
+2025-01-14,Maghe Sankranti,is_public_holiday
+2025-01-29,Martyrs Day,is_public_holiday
+2025-02-19,National Democracy Day,is_public_holiday
+2025-02-26,Maha Shivaratri,is_public_holiday
+2025-03-14,Holi,is_public_holiday
+2025-04-14,Nepali New Year,is_public_holiday
+2025-05-12,Buddha Jayanti,is_public_holiday
+2025-05-29,Republic Day,is_public_holiday
+2025-08-09,Janai Purnima,is_public_holiday
+2025-09-05,Indra Jatra,is_indra_jatra
+2025-09-22,Ghatasthapana (Dashain start),is_dashain
+2025-09-23,Dashain Day 2,is_dashain
+2025-09-24,Dashain Day 3,is_dashain
+2025-09-25,Dashain Day 4,is_dashain
+2025-09-26,Dashain Day 5,is_dashain
+2025-09-27,Dashain Day 6,is_dashain
+2025-09-28,Dashain Day 7 (Fulpati),is_dashain
+2025-09-29,Dashain Day 8 (Maha Ashtami),is_dashain
+2025-09-30,Dashain Day 9 (Maha Navami),is_dashain
+2025-10-01,Dashain Day 10 (Vijaya Dashami),is_dashain
+2025-10-02,Dashain Day 11,is_dashain
+2025-10-03,Dashain Day 12,is_dashain
+2025-10-04,Dashain Day 13,is_dashain
+2025-10-05,Dashain Day 14,is_dashain
+2025-10-06,Dashain Day 15,is_dashain
+2025-10-20,Tihar Day 1 (Kaag Tihar),is_tihar
+2025-10-21,Tihar Day 2 (Kukur Tihar),is_tihar
+2025-10-22,Tihar Day 3 (Laxmi Puja/Deepawali),is_tihar
+2025-10-23,Tihar Day 4 (Govardhan Puja),is_tihar
+2025-10-24,Tihar Day 5 (Bhai Tika),is_tihar
+2026-01-01,New Year,is_public_holiday
+2026-01-14,Maghe Sankranti,is_public_holiday
+2026-01-29,Martyrs Day,is_public_holiday
+2026-02-15,Maha Shivaratri,is_public_holiday
+2026-02-19,National Democracy Day,is_public_holiday
+2026-03-04,Holi,is_public_holiday
+2026-04-14,Nepali New Year,is_public_holiday
+2026-05-01,Buddha Jayanti,is_public_holiday
+2026-05-29,Republic Day,is_public_holiday
+2026-08-28,Janai Purnima,is_public_holiday
+2026-09-24,Indra Jatra,is_indra_jatra
+2026-10-11,Ghatasthapana (Dashain start),is_dashain
+2026-10-12,Dashain Day 2,is_dashain
+2026-10-13,Dashain Day 3,is_dashain
+2026-10-14,Dashain Day 4,is_dashain
+2026-10-15,Dashain Day 5,is_dashain
+2026-10-16,Dashain Day 6,is_dashain
+2026-10-17,Dashain Day 7 (Fulpati),is_dashain
+2026-10-18,Dashain Day 8 (Maha Ashtami),is_dashain
+2026-10-19,Dashain Day 9 (Maha Navami),is_dashain
+2026-10-20,Dashain Day 10 (Vijaya Dashami),is_dashain
+2026-10-21,Dashain Day 11,is_dashain
+2026-10-22,Dashain Day 12,is_dashain
+2026-10-23,Dashain Day 13,is_dashain
+2026-10-24,Dashain Day 14,is_dashain
+2026-10-25,Dashain Day 15,is_dashain
+2026-11-08,Tihar Day 1 (Kaag Tihar),is_tihar
+2026-11-09,Tihar Day 2 (Kukur Tihar),is_tihar
+2026-11-10,Tihar Day 3 (Laxmi Puja/Deepawali),is_tihar
+2026-11-11,Tihar Day 4 (Govardhan Puja),is_tihar
+2026-11-12,Tihar Day 5 (Bhai Tika),is_tihar
+2027-01-01,New Year,is_public_holiday
+2027-01-14,Maghe Sankranti,is_public_holiday
+2027-01-29,Martyrs Day,is_public_holiday
+2027-02-19,National Democracy Day,is_public_holiday
+2027-03-06,Maha Shivaratri,is_public_holiday
+2027-03-22,Holi,is_public_holiday
+2027-04-14,Nepali New Year,is_public_holiday
+2027-05-20,Buddha Jayanti,is_public_holiday
+2027-05-29,Republic Day,is_public_holiday
+2027-08-17,Janai Purnima,is_public_holiday
+2027-09-14,Indra Jatra,is_indra_jatra
+2027-10-01,Ghatasthapana (Dashain start),is_dashain
+2027-10-02,Dashain Day 2,is_dashain
+2027-10-03,Dashain Day 3,is_dashain
+2027-10-04,Dashain Day 4,is_dashain
+2027-10-05,Dashain Day 5,is_dashain
+2027-10-06,Dashain Day 6,is_dashain
+2027-10-07,Dashain Day 7 (Fulpati),is_dashain
+2027-10-08,Dashain Day 8 (Maha Ashtami),is_dashain
+2027-10-09,Dashain Day 9 (Maha Navami),is_dashain
+2027-10-10,Dashain Day 10 (Vijaya Dashami),is_dashain
+2027-10-11,Dashain Day 11,is_dashain
+2027-10-12,Dashain Day 12,is_dashain
+2027-10-13,Dashain Day 13,is_dashain
+2027-10-14,Dashain Day 14,is_dashain
+2027-10-15,Dashain Day 15,is_dashain
+2027-10-29,Tihar Day 1 (Kaag Tihar),is_tihar
+2027-10-30,Tihar Day 2 (Kukur Tihar),is_tihar
+2027-10-31,Tihar Day 3 (Laxmi Puja/Deepawali),is_tihar
+2027-11-01,Tihar Day 4 (Govardhan Puja),is_tihar
+2027-11-02,Tihar Day 5 (Bhai Tika),is_tihar
