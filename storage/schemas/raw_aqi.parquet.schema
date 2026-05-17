@@ -1,0 +1,14 @@
+message {
+  required string station_id;
+  required string source;
+  required double lat;
+  required double lon;
+  required timestamp timestamp_utc;
+  optional double pm25;
+  optional double pm10;
+  optional double no2;
+  optional double o3;
+  optional double co;
+  optional int32 aqi_us;
+  required timestamp ingested_at;
+}
