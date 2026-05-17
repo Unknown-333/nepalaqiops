@@ -1,0 +1,93 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "short" } },
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+      "title": "Model RMSE (Champion vs Challenger)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "nepalaqiops_model_rmse{model=\"champion\"}",
+          "legendFormat": "Champion RMSE (h{{horizon_hours}})"
+        },
+        {
+          "expr": "nepalaqiops_model_rmse{model=\"challenger\"}",
+          "legendFormat": "Challenger RMSE (h{{horizon_hours}})"
+        }
+      ]
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": { "steps": [
+            {"color": "green", "value": null},
+            {"color": "yellow", "value": 0.2},
+            {"color": "red", "value": 0.25}
+          ]}
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+      "title": "Feature Drift (PSI Score)",
+      "type": "bargauge",
+      "targets": [
+        {
+          "expr": "nepalaqiops_drift_score",
+          "legendFormat": "{{feature}}"
+        }
+      ]
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "short" } },
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+      "title": "API Errors by Endpoint",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "rate(nepalaqiops_api_errors_total[5m]) * 60",
+          "legendFormat": "{{endpoint}} - {{error_type}}"
+        }
+      ]
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+      "title": "Kafka Consumer Lag",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "nepalaqiops_kafka_consumer_lag",
+          "legendFormat": "Consumer Lag"
+        }
+      ]
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": {"h": 4, "w": 24, "x": 0, "y": 16},
+      "title": "Model Health Summary",
+      "type": "table",
+      "targets": [
+        {
+          "expr": "nepalaqiops_model_rmse",
+          "format": "table",
+          "instant": true
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": ["nepalaqiops", "model-health"],
+  "templating": { "list": [] },
+  "time": { "from": "now-7d", "to": "now" },
+  "title": "NepalAQI-Ops: Model Health",
+  "uid": "nepalaqiops-model-health"
+}
