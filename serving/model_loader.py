@@ -85,6 +85,9 @@ class ModelStore:
 
         Falls back to statistical baseline if no trained model is available.
         """
+        import asyncio
+        from starlette.concurrency import run_in_threadpool
+
         # Try to get recent data from Redis for informed prediction
         try:
             import redis
@@ -104,10 +107,8 @@ class ModelStore:
         except Exception:
             last_pm25 = 50.0
 
-        # Generate predictions
-        # In production, this would call the actual trained models
-        # For now, generate a realistic forecast based on last known value
-        predictions = self._generate_forecast(last_pm25, hours)
+        # Generate predictions in thread pool to avoid blocking event loop
+        predictions = await run_in_threadpool(self._generate_forecast, last_pm25, hours)
 
         # Confidence intervals
         std_estimate = max(last_pm25 * 0.15, 5.0)
