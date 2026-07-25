@@ -46,8 +46,12 @@ class WeatherClient:
             "forecast_days": forecast_days,
             "timezone": "UTC",
         }
-        response = self.session.get(f"{BASE_URL}/forecast", params=params, timeout=30)
-        response.raise_for_status()
+        try:
+            response = self.session.get(f"{BASE_URL}/forecast", params=params, timeout=30)
+            response.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Failed to fetch Open-Meteo forecast: {e}")
+            raise
         data = response.json()
         return self._parse_hourly(data)
 
@@ -70,8 +74,12 @@ class WeatherClient:
             "end_date": end_date.strftime("%Y-%m-%d"),
             "timezone": "UTC",
         }
-        response = self.session.get(HISTORY_URL, params=params, timeout=30)
-        response.raise_for_status()
+        try:
+            response = self.session.get(HISTORY_URL, params=params, timeout=30)
+            response.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Failed to fetch Open-Meteo historical data: {e}")
+            raise
         data = response.json()
         return self._parse_hourly(data)
 
