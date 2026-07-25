@@ -2,9 +2,7 @@
 Tests for data ingestion clients.
 """
 
-import pytest
-from unittest.mock import patch, MagicMock
-from datetime import datetime, timezone
+from unittest.mock import MagicMock, patch
 
 
 class TestOpenAQClient:

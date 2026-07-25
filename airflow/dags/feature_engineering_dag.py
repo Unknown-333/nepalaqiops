@@ -4,13 +4,15 @@ Waits for ingestion DAG to complete before writing to DuckDB (avoids single-writ
 """
 
 import sys
+
 sys.path.insert(0, "/opt/airflow")
 
 from datetime import datetime, timedelta
 
-from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.sensors.external_task import ExternalTaskSensor
+
+from airflow import DAG
 
 default_args = {
     "owner": "nepalaqiops",
@@ -33,8 +35,8 @@ dag = DAG(
 
 def compute_rolling_features(**kwargs):
     """Compute rolling averages, lag features, and time encodings."""
-    from storage.lake import DataLake
     from features.feature_engineering import FeatureEngineer
+    from storage.lake import DataLake
 
     lake = DataLake()
     engineer = FeatureEngineer()
@@ -73,8 +75,8 @@ def compute_calendar_flags(**kwargs):
 
 def compute_spatial_kriging(**kwargs):
     """Run Kriging interpolation for wards without sensors."""
-    from storage.lake import DataLake
     from ingestion.spatial_interpolation import SpatialInterpolator
+    from storage.lake import DataLake
 
     lake = DataLake()
     interpolator = SpatialInterpolator()
@@ -106,8 +108,9 @@ def compute_spatial_kriging(**kwargs):
 
 def write_feature_store(**kwargs):
     """Write computed features to Redis for online serving."""
-    import os
     import json
+    import os
+
     import redis
 
     from storage.lake import DataLake

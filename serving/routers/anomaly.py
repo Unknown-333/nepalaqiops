@@ -4,7 +4,7 @@ Anomaly endpoints — latest anomaly events from Kafka.
 
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, Request, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 
 router = APIRouter()
 
@@ -14,8 +14,9 @@ async def get_latest_anomalies(request: Request, limit: int = 50):
     """
     Return the last N anomaly events from the anomaly.alerts topic.
     """
-    import os
     import json
+    import os
+
     import redis
 
     redis_host = os.getenv("REDIS_HOST", "redis")

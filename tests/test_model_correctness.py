@@ -4,9 +4,10 @@ No running services needed — uses fixtures and synthetic data.
 """
 
 import os
-import pytest
+
 import numpy as np
 import pandas as pd
+import pytest
 
 
 class TestProphetForecastCorrectness:

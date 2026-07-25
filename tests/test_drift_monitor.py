@@ -3,11 +3,11 @@ Tests for drift monitor logic — PSI classification, thresholds, and retrain tr
 """
 
 import os
-import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
+
 import numpy as np
 import pandas as pd
-
+import pytest
 
 # Default thresholds (from .env)
 PSI_WARNING_THRESHOLD = float(os.getenv("PSI_WARNING_THRESHOLD", "0.2"))

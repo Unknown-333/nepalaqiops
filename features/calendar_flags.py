@@ -2,12 +2,11 @@
 Calendar Flags — Nepal festival and seasonal flags for feature engineering.
 """
 
-import os
 import logging
+import os
 from datetime import datetime
 
 import pandas as pd
-import numpy as np
 
 logger = logging.getLogger(__name__)
 

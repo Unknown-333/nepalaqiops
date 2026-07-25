@@ -4,10 +4,10 @@ Provides ACID-like transactions on Parquet files without Spark overhead.
 Includes exponential backoff for DuckDB lock contention.
 """
 
-import os
-import time
-import random
 import logging
+import os
+import random
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any

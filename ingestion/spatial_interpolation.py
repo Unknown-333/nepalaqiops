@@ -3,8 +3,8 @@ Spatial Interpolation — Ordinary Kriging for ward-level PM2.5 estimates.
 Uses pykrige to interpolate from sparse sensor data to Kathmandu ward centroids.
 """
 
-import os
 import logging
+import os
 from typing import Any
 
 import numpy as np

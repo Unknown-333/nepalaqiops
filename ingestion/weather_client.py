@@ -3,8 +3,8 @@ Open-Meteo Weather Client — fetches weather data for Kathmandu Valley.
 Completely free, no API key required.
 """
 
-import os
 import logging
+import os
 from datetime import datetime, timedelta, timezone
 from typing import Any
 

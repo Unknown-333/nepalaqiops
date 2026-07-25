@@ -2,15 +2,14 @@
 Training Pipeline — orchestrates model training with full MLflow experiment tracking.
 """
 
-import os
 import logging
+import os
 import tempfile
 from datetime import datetime, timezone
 from typing import Any
 
 import mlflow
 import mlflow.sklearn
-import numpy as np
 import pandas as pd
 
 logger = logging.getLogger(__name__)

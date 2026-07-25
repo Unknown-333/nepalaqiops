@@ -3,8 +3,8 @@ Model Registry — manages champion/challenger model lifecycle.
 Promotes models through: None → Staging → Production (Champion).
 """
 
-import os
 import logging
+import os
 from typing import Any
 
 import mlflow

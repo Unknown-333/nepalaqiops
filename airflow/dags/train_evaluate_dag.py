@@ -3,12 +3,14 @@ Airflow DAG: Train & Evaluate — weekly full model retraining with MLflow.
 """
 
 import sys
+
 sys.path.insert(0, "/opt/airflow")
 
 from datetime import datetime, timedelta
 
+from airflow.operators.python import BranchPythonOperator, PythonOperator
+
 from airflow import DAG
-from airflow.operators.python import PythonOperator, BranchPythonOperator
 
 default_args = {
     "owner": "nepalaqiops",

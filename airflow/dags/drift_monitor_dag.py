@@ -4,14 +4,16 @@ Triggers emergency retrain if drift exceeds thresholds.
 """
 
 import sys
+
 sys.path.insert(0, "/opt/airflow")
 
 import os
 from datetime import datetime, timedelta
 
-from airflow import DAG
-from airflow.operators.python import PythonOperator, BranchPythonOperator
+from airflow.operators.python import BranchPythonOperator, PythonOperator
 from airflow.operators.trigger_dagrun import TriggerDagRunOperator
+
+from airflow import DAG
 
 default_args = {
     "owner": "nepalaqiops",
@@ -77,8 +79,8 @@ def compute_psi(**kwargs):
 
 def compute_rmse_drift(**kwargs):
     """Compute live RMSE vs rolling baseline."""
+
     from training.evaluate import ModelEvaluator
-    import numpy as np
 
     # In production, this would load recent predictions and compare to actuals
     # For now, simulate with stored metrics

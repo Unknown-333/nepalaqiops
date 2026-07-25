@@ -13,12 +13,13 @@ Usage:
     python scripts/evaluate_baseline.py
 """
 
+import json
 import os
 import sys
-import json
+from datetime import datetime, timezone
+
 import numpy as np
 import requests
-from datetime import datetime, timezone
 
 FASTAPI_URL = os.getenv("FASTAPI_URL", "http://localhost:8000")
 REDIS_HOST = os.getenv("REDIS_HOST", "localhost")

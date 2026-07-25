@@ -4,11 +4,9 @@ Forecast endpoints — PM2.5 predictions and heatmap.
 
 import os
 from datetime import datetime, timedelta, timezone
-from typing import Optional
 
-from fastapi import APIRouter, Request, Header, Query, HTTPException
+from fastapi import APIRouter, Header, HTTPException, Query, Request
 from pydantic import BaseModel, Field
-import numpy as np
 
 router = APIRouter()
 
@@ -40,7 +38,7 @@ async def get_forecast(
     request: Request,
     hours: int = Query(default=24, ge=1, le=72),
     model: str = Query(default="auto", regex="^(auto|prophet|lstm|ensemble)$"),
-    x_model_version: Optional[str] = Header(default="champion", alias="X-Model-Version"),
+    x_model_version: str | None = Header(default="champion", alias="X-Model-Version"),
 ):
     """
     Get PM2.5 forecast for a specific station.
@@ -50,11 +48,12 @@ async def get_forecast(
     - **model**: Model to use (auto|prophet|lstm|ensemble)
     - **X-Model-Version**: champion or challenger (for A/B routing)
     """
+    import time
+
     from monitoring.prometheus_metrics import (
         PREDICTION_LATENCY,
         PREDICTIONS_TOTAL,
     )
-    import time
 
     start_time = time.time()
     model_store = getattr(request.app.state, "model_store", None)
@@ -122,6 +121,7 @@ async def get_heatmap(request: Request):
     Includes Kriging-interpolated values for wards without sensors.
     """
     import json
+
     import redis
 
     redis_pool = getattr(request.app.state, "redis_pool", None)

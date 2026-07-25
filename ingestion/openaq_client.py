@@ -3,9 +3,9 @@ OpenAQ API v3 Client — fetches air quality data for Nepal/Kathmandu Valley.
 API v1/v2 were retired Jan 31, 2025. This uses exclusively v3 endpoints.
 """
 
+import logging
 import os
 import time
-import logging
 from datetime import datetime, timedelta, timezone
 from typing import Any
 

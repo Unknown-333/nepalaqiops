@@ -6,12 +6,11 @@ Usage:
     python scripts/smoke_test.py [--verbose] [--timeout 120]
 """
 
-import os
-import sys
-import json
-import time
 import argparse
 import logging
+import os
+import sys
+import time
 from datetime import datetime, timezone
 from typing import NamedTuple
 

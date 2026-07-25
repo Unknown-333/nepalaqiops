@@ -8,11 +8,10 @@ Usage:
 Requires: requests, numpy, redis, boto3
 """
 
+import json
 import os
 import sys
-import json
-import time
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 
 import numpy as np
 
@@ -96,11 +95,11 @@ def check_1_prophet_sanity():
         elif has_unusual:
             unusual_vals = predictions[(predictions < 20) | (predictions > 350)]
             results["check_1"] = ("WARN", f"unusual values present: {unusual_vals[:3]}")
-            print(f"  WARN: Unusual values detected (outside [20, 350])")
+            print("  WARN: Unusual values detected (outside [20, 350])")
             print(f"         Range: [{predictions.min():.1f}, {predictions.max():.1f}], std={std_dev:.1f}")
         else:
             results["check_1"] = ("PASS", f"range=[{predictions.min():.1f}, {predictions.max():.1f}], std={std_dev:.1f}")
-            print(f"  PASS: All 24 predictions valid")
+            print("  PASS: All 24 predictions valid")
             print(f"         Range: [{predictions.min():.1f}, {predictions.max():.1f}], std={std_dev:.1f}")
 
     except Exception as e:
@@ -110,8 +109,8 @@ def check_1_prophet_sanity():
 
 def check_2_lstm_vs_naive():
     """CHECK 2 — LSTM not predicting naive lag-1."""
-    import requests
     import redis
+    import requests
 
     print("\n[CHECK 2] LSTM vs Naive Baseline")
     print("-" * 50)
@@ -166,11 +165,11 @@ def check_2_lstm_vs_naive():
             print(f"  FAIL: LSTM predictions are flat (std={pred_std:.2f} < 2.0)")
         elif naive_rmse_proxy < 1.0:
             results["check_2"] = ("WARN", f"predictions very close to last value (RMSE_from_last={naive_rmse_proxy:.2f})")
-            print(f"  WARN: Predictions barely deviate from last known value")
+            print("  WARN: Predictions barely deviate from last known value")
             print(f"         last_pm25={last_pm25:.1f}, pred_std={pred_std:.2f}")
         else:
             results["check_2"] = ("PASS", f"pred_std={pred_std:.2f}, deviation_from_naive={naive_rmse_proxy:.2f}")
-            print(f"  PASS: LSTM shows temporal structure beyond naive baseline")
+            print("  PASS: LSTM shows temporal structure beyond naive baseline")
             print(f"         last_pm25={last_pm25:.1f}, pred_std={pred_std:.2f}, deviation={naive_rmse_proxy:.2f}")
 
     except Exception as e:
@@ -212,8 +211,8 @@ def check_3_ensemble_superiority():
             # Without separate model access, verify ensemble is at least reasonable
             if pred_std > 2.0 and all(0 < p < 500 for p in predictions):
                 results["check_3"] = ("PASS", f"ensemble predictions valid (std={pred_std:.2f})")
-                print(f"  PASS: Ensemble predictions are valid and non-flat")
-                print(f"         (separate model comparison requires trained Prophet+LSTM)")
+                print("  PASS: Ensemble predictions are valid and non-flat")
+                print("         (separate model comparison requires trained Prophet+LSTM)")
             else:
                 results["check_3"] = ("WARN", "cannot separate models for comparison")
                 print("  WARN: Cannot separately test Prophet vs LSTM vs Ensemble")
@@ -235,7 +234,7 @@ def check_3_ensemble_superiority():
 
         if consistency_error < 1.0:
             results["check_3"] = ("PASS", f"ensemble consistent (err={consistency_error:.3f})")
-            print(f"  PASS: Ensemble is correct weighted average")
+            print("  PASS: Ensemble is correct weighted average")
             print(f"         Consistency error: {consistency_error:.4f}")
             print(f"         Prophet std={np.std(prophet_preds):.2f}, LSTM std={np.std(lstm_preds):.2f}")
         elif consistency_error < 5.0:
@@ -303,15 +302,15 @@ def check_4_kriging_coverage():
             print(f"  FAIL: {len(invalid_wards)} wards have invalid/missing PM2.5 values")
         elif len(pm25_values) > 0 and np.std(pm25_values) < 0.01:
             results["check_4"] = ("FAIL", "all wards identical (Kriging fallback to mean)")
-            print(f"  FAIL: All 32 wards have identical PM2.5 values (std=0)")
-            print(f"         This indicates Kriging fell back to mean")
+            print("  FAIL: All 32 wards have identical PM2.5 values (std=0)")
+            print("         This indicates Kriging fell back to mean")
         elif not coords_valid:
             results["check_4"] = ("WARN", "some coordinates outside KTM bounding box")
-            print(f"  WARN: Some ward coordinates are outside KTM bounding box")
+            print("  WARN: Some ward coordinates are outside KTM bounding box")
         else:
             spatial_std = np.std(pm25_values) if pm25_values else 0
             results["check_4"] = ("PASS", f"wards={n_wards}/32, spatial_std={spatial_std:.2f}")
-            print(f"  PASS: All 32 wards present with valid PM2.5 values")
+            print("  PASS: All 32 wards present with valid PM2.5 values")
             print(f"         Range: [{min(pm25_values):.1f}, {max(pm25_values):.1f}], spatial_std={spatial_std:.2f}")
 
     except Exception as e:
@@ -365,7 +364,7 @@ def check_5_drift_thresholds():
         if age_hours > 25:
             results["check_5"] = ("WARN", f"latest report is {age_hours:.1f}h old (drift monitor may not have run)")
             print(f"  WARN: Latest drift report is {age_hours:.1f} hours old")
-            print(f"         Expected: < 25 hours (daily drift monitor)")
+            print("         Expected: < 25 hours (daily drift monitor)")
             return
 
         # Verify thresholds in code are consistent
@@ -394,7 +393,7 @@ def check_5_drift_thresholds():
 
         if threshold_correct:
             results["check_5"] = ("PASS", f"thresholds correct, latest_report_age={age_hours:.1f}h")
-            print(f"  PASS: Threshold logic verified (stable < 0.2 < warning < 0.25 < retrain)")
+            print("  PASS: Threshold logic verified (stable < 0.2 < warning < 0.25 < retrain)")
         else:
             results["check_5"] = ("FAIL", "threshold classification logic is incorrect")
             print("  FAIL: Threshold classification logic has errors")

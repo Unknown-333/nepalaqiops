@@ -4,7 +4,6 @@ Feature Engineering — computes rolling, lag, cyclical, and derived features.
 
 import logging
 import math
-from typing import Any
 
 import numpy as np
 import pandas as pd

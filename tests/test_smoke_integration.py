@@ -3,10 +3,10 @@ Integration tests for NepalAQI-Ops pipeline.
 Requires running Docker services — skip with: pytest -m "not integration"
 """
 
-import os
-import sys
 import json
+import os
 import time
+
 import pytest
 
 # Mark all tests as integration
@@ -119,8 +119,9 @@ class TestFastAPIForecastSchema:
 
     def test_fastapi_forecast_schema(self):
         """Call GET /forecast/aqicn_kathmandu and validate full response schema."""
-        import requests
         from datetime import datetime
+
+        import requests
 
         try:
             resp = requests.get(f"{FASTAPI_URL}/forecast/aqicn_kathmandu?hours=24", timeout=10)

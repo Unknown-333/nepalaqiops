@@ -3,12 +3,14 @@ Airflow DAG: AQI Data Ingestion — hourly fetch from OpenAQ v3 and AQICN.
 """
 
 import sys
+
 sys.path.insert(0, "/opt/airflow")
 
 from datetime import datetime, timedelta
 
-from airflow import DAG
 from airflow.operators.python import PythonOperator
+
+from airflow import DAG
 
 default_args = {
     "owner": "nepalaqiops",
@@ -31,8 +33,8 @@ dag = DAG(
 
 def fetch_openaq_stations(**kwargs):
     """Fetch air quality readings from OpenAQ v3 API."""
-    from ingestion.openaq_client import OpenAQClient
     from ingestion.kafka_producer import KafkaAQIProducer
+    from ingestion.openaq_client import OpenAQClient
 
     client = OpenAQClient()
     readings = client.fetch_all_kathmandu_readings()
@@ -63,9 +65,9 @@ def fetch_aqicn_cities(**kwargs):
 
 def persist_to_datalake(**kwargs):
     """Consume readings and persist to DuckDB data lake."""
-    from storage.lake import DataLake
-    from ingestion.openaq_client import OpenAQClient
     from ingestion.aqicn_client import AQICNClient
+    from ingestion.openaq_client import OpenAQClient
+    from storage.lake import DataLake
 
     lake = DataLake()
 
@@ -85,11 +87,12 @@ def persist_to_datalake(**kwargs):
 
 def run_anomaly_detection(**kwargs):
     """Score new readings with Isolation Forest, emit anomaly alerts."""
-    import pickle
     import os
-    from storage.lake import DataLake
+    import pickle
+
     from ingestion.kafka_producer import KafkaAQIProducer
     from models.isolation_forest import AnomalyDetector
+    from storage.lake import DataLake
 
     lake = DataLake()
 

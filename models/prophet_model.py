@@ -6,8 +6,8 @@ Facebook Prophet captures yearly, weekly, and daily seasonality with Nepal-speci
 import logging
 from typing import Any
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 from prophet import Prophet
 
 logger = logging.getLogger(__name__)

@@ -2,10 +2,11 @@
 Tests for feature engineering pipeline.
 """
 
-import pytest
-from datetime import datetime, timezone
+from datetime import datetime
+
 import numpy as np
 import pandas as pd
+import pytest
 
 
 class TestRollingFeatures:

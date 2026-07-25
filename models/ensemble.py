@@ -3,9 +3,8 @@ Ensemble Model — weighted combination of Prophet and LSTM forecasts.
 Weights are configurable via environment variables and recalculated during retraining.
 """
 
-import os
 import logging
-from typing import Any
+import os
 
 import numpy as np
 

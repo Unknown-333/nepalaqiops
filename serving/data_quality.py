@@ -4,9 +4,7 @@ Catches API schema changes, NaN floods, and physically impossible values.
 """
 
 import pandera as pa
-from pandera import Column, Check, DataFrameSchema
-import numpy as np
-
+from pandera import Check, Column, DataFrameSchema
 
 # =============================================================================
 # INGESTION LAYER SCHEMAS

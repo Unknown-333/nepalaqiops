@@ -3,9 +3,9 @@ Kafka Producer — pushes AQI and weather readings to Kafka topics.
 Includes KAFKA_ENABLED bypass for local development.
 """
 
-import os
 import json
 import logging
+import os
 from typing import Any
 
 logger = logging.getLogger(__name__)

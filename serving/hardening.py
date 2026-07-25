@@ -3,10 +3,11 @@ System Hardening Utilities — Retry logic, fallback caches, and data validation
 Used across ingestion, serving, and training layers.
 """
 
-import time
-import logging
 import functools
-from typing import Any, Callable, TypeVar
+import logging
+import time
+from collections.abc import Callable
+from typing import Any, TypeVar
 
 logger = logging.getLogger(__name__)
 

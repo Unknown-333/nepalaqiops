@@ -2,9 +2,8 @@
 Evidently AI Monitoring — generates drift, data quality, and model performance reports.
 """
 
-import os
 import logging
-from typing import Any
+import os
 
 import numpy as np
 import pandas as pd
@@ -61,12 +60,12 @@ def generate_training_reports(features_df: pd.DataFrame) -> dict[str, str]:
     Returns paths to generated HTML reports.
     """
     try:
-        from evidently.report import Report
         from evidently.metric_preset import (
-            DataQualityPreset,
             DataDriftPreset,
+            DataQualityPreset,
             RegressionPreset,
         )
+        from evidently.report import Report
     except ImportError:
         logger.warning("Evidently not installed. Skipping report generation.")
         return {}
@@ -119,8 +118,9 @@ def generate_training_reports(features_df: pd.DataFrame) -> dict[str, str]:
 def upload_reports_to_minio(report_paths: dict[str, str]) -> dict[str, str]:
     """Upload generated reports to MinIO bucket."""
     try:
-        import boto3
         from datetime import datetime, timezone
+
+        import boto3
 
         s3 = boto3.client(
             "s3",

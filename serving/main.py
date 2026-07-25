@@ -2,14 +2,14 @@
 NepalAQI-Ops FastAPI Application — serves predictions and model metrics.
 """
 
-import os
 import logging
+import os
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from serving.routers import forecast, anomaly, health
 from monitoring.prometheus_metrics import setup_metrics
+from serving.routers import anomaly, forecast, health
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

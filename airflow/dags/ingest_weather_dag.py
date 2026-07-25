@@ -3,12 +3,14 @@ Airflow DAG: Weather Data Ingestion — hourly fetch from Open-Meteo.
 """
 
 import sys
+
 sys.path.insert(0, "/opt/airflow")
 
 from datetime import datetime, timedelta
 
-from airflow import DAG
 from airflow.operators.python import PythonOperator
+
+from airflow import DAG
 
 default_args = {
     "owner": "nepalaqiops",
@@ -31,8 +33,8 @@ dag = DAG(
 
 def fetch_openmeteo(**kwargs):
     """Fetch weather data from Open-Meteo API."""
-    from ingestion.weather_client import WeatherClient
     from ingestion.kafka_producer import KafkaAQIProducer
+    from ingestion.weather_client import WeatherClient
 
     client = WeatherClient()
     readings = client.get_current_forecast(forecast_days=1)
@@ -47,8 +49,8 @@ def fetch_openmeteo(**kwargs):
 
 def persist_weather(**kwargs):
     """Persist weather data to DuckDB data lake as Parquet."""
-    from storage.lake import DataLake
     from ingestion.weather_client import WeatherClient
+    from storage.lake import DataLake
 
     lake = DataLake()
     client = WeatherClient()

@@ -3,13 +3,12 @@ NepalAQI-Ops Streamlit Dashboard — live AQI map, forecasts, SHAP explainabilit
 """
 
 import os
-import json
-from datetime import datetime, timedelta, timezone
+from datetime import datetime
 
-import streamlit as st
-import requests
-import pandas as pd
 import numpy as np
+import pandas as pd
+import requests
+import streamlit as st
 
 # Configuration
 FASTAPI_URL = os.getenv("FASTAPI_URL", "http://fastapi:8000")

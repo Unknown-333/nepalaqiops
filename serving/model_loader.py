@@ -4,9 +4,8 @@ Caches models in memory for fast inference.
 Includes FallbackCache for resilience when Redis/MLflow are unreachable.
 """
 
-import os
 import logging
-import pickle
+import os
 from datetime import datetime, timezone
 from typing import Any
 
@@ -93,7 +92,6 @@ class ModelStore:
         Falls back to statistical baseline if no trained model is available.
         Uses FallbackCache when Redis is unreachable.
         """
-        import asyncio
         from starlette.concurrency import run_in_threadpool
 
         cache_key = f"{station_id}:{hours}:{model_type}"
@@ -101,8 +99,9 @@ class ModelStore:
         # Try to get recent data from Redis for informed prediction
         last_pm25 = 50.0
         try:
-            import redis
             import json
+
+            import redis
 
             if redis_pool:
                 r = redis.Redis(connection_pool=redis_pool)
