@@ -33,19 +33,28 @@ def compute_feature_psi(
             psi_scores[col] = 0.0
             continue
 
-        # Create bins from baseline
-        bin_edges = np.linspace(
-            min(base_vals.min(), curr_vals.min()),
-            max(base_vals.max(), curr_vals.max()),
-            n_bins + 1,
-        )
+        # Bin edges from baseline quantiles (deciles) so each bin holds a
+        # comparable share of the baseline and out-of-range current values are
+        # absorbed by the open-ended tails. Fall back to equal-width bins for
+        # near-constant / binary features where quantiles collapse.
+        if np.unique(base_vals).size <= 2:
+            bin_edges = np.linspace(
+                min(base_vals.min(), curr_vals.min()),
+                max(base_vals.max(), curr_vals.max()),
+                n_bins + 1,
+            )
+        else:
+            bin_edges = np.unique(np.quantile(base_vals, np.linspace(0, 1, n_bins + 1)))
+            bin_edges[0] = -np.inf
+            bin_edges[-1] = np.inf
 
         base_hist, _ = np.histogram(base_vals, bins=bin_edges)
         curr_hist, _ = np.histogram(curr_vals, bins=bin_edges)
 
-        # Normalize to proportions
-        base_prop = (base_hist + 1e-6) / (base_hist.sum() + n_bins * 1e-6)
-        curr_prop = (curr_hist + 1e-6) / (curr_hist.sum() + n_bins * 1e-6)
+        # Normalize to proportions, flooring empty/sparse bins to a small value
+        # so the log ratio stays finite without exploding on near-empty bins.
+        base_prop = np.clip(base_hist / base_hist.sum(), 1e-3, None)
+        curr_prop = np.clip(curr_hist / curr_hist.sum(), 1e-3, None)
 
         # PSI formula
         psi = np.sum((curr_prop - base_prop) * np.log(curr_prop / base_prop))

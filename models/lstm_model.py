@@ -53,10 +53,10 @@ class LSTMAQModel:
         self.batch_size = batch_size
         self.max_epochs = max_epochs
         self.patience = patience
-        self.model = None
-        self.scaler = None
+        self.model: Any = None
+        self.scaler: Any = None
         self.feature_columns = LSTM_FEATURES
-        self.history = None
+        self.history: Any = None
 
     def _build_model(self, n_features: int):
         """Build the LSTM architecture."""

@@ -65,7 +65,9 @@ def retry_with_backoff(
 
                     time.sleep(actual_delay)
 
-            raise last_exception  # Should not reach here
+            if last_exception is not None:
+                raise last_exception
+            raise RuntimeError("Retry loop exited without a result")  # Should not reach here
         return wrapper
     return decorator
 

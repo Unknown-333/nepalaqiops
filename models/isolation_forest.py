@@ -86,7 +86,7 @@ class AnomalyDetector:
         - Reading = 0 for >3 consecutive hours
         - Reading > 999 (sensor malfunction)
         """
-        faults = []
+        faults: list[dict[str, Any]] = []
 
         if "pm25" not in df.columns:
             return faults

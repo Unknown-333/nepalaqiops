@@ -39,7 +39,7 @@ class WeatherClient:
 
     def get_current_forecast(self, forecast_days: int = 2) -> list[dict[str, Any]]:
         """Fetch current forecast (hourly) for next N days."""
-        params = {
+        params: dict[str, Any] = {
             "latitude": self.lat,
             "longitude": self.lon,
             "hourly": ",".join(HOURLY_PARAMS),
@@ -66,7 +66,7 @@ class WeatherClient:
         if start_date is None:
             start_date = end_date - timedelta(days=7)
 
-        params = {
+        params: dict[str, Any] = {
             "latitude": self.lat,
             "longitude": self.lon,
             "hourly": ",".join(HOURLY_PARAMS),

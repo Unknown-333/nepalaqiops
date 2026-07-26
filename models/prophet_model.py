@@ -121,6 +121,8 @@ class ProphetAQModel:
 
     def evaluate(self, val_df: pd.DataFrame) -> dict[str, Any]:
         """Evaluate model on validation data."""
+        if self.model is None:
+            raise RuntimeError("Model not trained.")
         prophet_df = self.prepare_data(val_df)
         predictions = self.model.predict(prophet_df)
 

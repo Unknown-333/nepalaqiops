@@ -26,7 +26,7 @@ class OpenAQClient:
     """Client for OpenAQ API v3 with retry logic and rate limit handling."""
 
     def __init__(self, api_key: str | None = None):
-        self.api_key = api_key or os.getenv("OPENAQ_API_KEY", "")
+        self.api_key = api_key or os.getenv("OPENAQ_API_KEY") or ""
         self.session = requests.Session()
         self.session.headers.update({
             "X-API-Key": self.api_key,

@@ -2,9 +2,11 @@
 Forecast endpoints — PM2.5 predictions and heatmap.
 """
 
+import json
 import os
 from datetime import datetime, timedelta, timezone
 
+import redis
 from fastapi import APIRouter, Header, HTTPException, Query, Request
 from pydantic import BaseModel, Field
 
@@ -30,6 +32,62 @@ class ForecastResponse(BaseModel):
     forecasts: list[ForecastPoint]
     model_used: str
     model_version: str
+
+
+@router.get("/heatmap", name="forecast_heatmap")
+async def get_heatmap(request: Request):
+    """
+    Get ward-level AQI predictions as GeoJSON FeatureCollection.
+    Includes Kriging-interpolated values for wards without sensors.
+    """
+    redis_pool = getattr(request.app.state, "redis_pool", None)
+
+    try:
+        if redis_pool:
+            r = redis.Redis(connection_pool=redis_pool)
+        else:
+            redis_host = os.getenv("REDIS_HOST", "redis")
+            redis_port = int(os.getenv("REDIS_PORT", "6379"))
+            r = redis.Redis(host=redis_host, port=redis_port, decode_responses=True)
+
+        # Build GeoJSON from cached ward features
+        features = []
+        for ward_id in range(1, 33):
+            key = f"features:ward_{ward_id}:latest"
+            data = r.get(key)
+
+            if data:
+                ward_data = json.loads(data)
+                pm25 = ward_data.get("pm25") or ward_data.get("pm25_1h_mean", 0)
+            else:
+                pm25 = None
+
+            feature = {
+                "type": "Feature",
+                "properties": {
+                    "ward_id": ward_id,
+                    "ward_name": f"Kathmandu Ward {ward_id}",
+                    "pm25": pm25,
+                    "aqi_category": AQI_CATEGORIES[_pm25_to_category_idx(pm25)] if pm25 else "Unknown",
+                },
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [
+                        85.27 + (ward_id % 8) * 0.025,
+                        27.65 + (ward_id // 8) * 0.02,
+                    ],
+                },
+            }
+            features.append(feature)
+
+        return {
+            "type": "FeatureCollection",
+            "features": features,
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Heatmap generation failed: {e}")
 
 
 @router.get("/{station_id}", response_model=ForecastResponse)
@@ -112,66 +170,6 @@ async def get_forecast(
         from monitoring.prometheus_metrics import API_ERRORS
         API_ERRORS.labels(endpoint="forecast", error_type=type(e).__name__).inc()
         raise HTTPException(status_code=500, detail=str(e))
-
-
-@router.get("/heatmap", name="forecast_heatmap")
-async def get_heatmap(request: Request):
-    """
-    Get ward-level AQI predictions as GeoJSON FeatureCollection.
-    Includes Kriging-interpolated values for wards without sensors.
-    """
-    import json
-
-    import redis
-
-    redis_pool = getattr(request.app.state, "redis_pool", None)
-
-    try:
-        if redis_pool:
-            r = redis.Redis(connection_pool=redis_pool)
-        else:
-            redis_host = os.getenv("REDIS_HOST", "redis")
-            redis_port = int(os.getenv("REDIS_PORT", "6379"))
-            r = redis.Redis(host=redis_host, port=redis_port, decode_responses=True)
-
-        # Build GeoJSON from cached ward features
-        features = []
-        for ward_id in range(1, 33):
-            key = f"features:ward_{ward_id}:latest"
-            data = r.get(key)
-
-            if data:
-                ward_data = json.loads(data)
-                pm25 = ward_data.get("pm25") or ward_data.get("pm25_1h_mean", 0)
-            else:
-                pm25 = None
-
-            feature = {
-                "type": "Feature",
-                "properties": {
-                    "ward_id": ward_id,
-                    "ward_name": f"Kathmandu Ward {ward_id}",
-                    "pm25": pm25,
-                    "aqi_category": AQI_CATEGORIES[_pm25_to_category_idx(pm25)] if pm25 else "Unknown",
-                },
-                "geometry": {
-                    "type": "Point",
-                    "coordinates": [
-                        85.27 + (ward_id % 8) * 0.025,
-                        27.65 + (ward_id // 8) * 0.02,
-                    ],
-                },
-            }
-            features.append(feature)
-
-        return {
-            "type": "FeatureCollection",
-            "features": features,
-            "generated_at": datetime.now(timezone.utc).isoformat(),
-        }
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Heatmap generation failed: {e}")
 
 
 def _pm25_to_category_idx(pm25: float | None) -> int:

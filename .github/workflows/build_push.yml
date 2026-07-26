@@ -22,11 +22,14 @@ jobs:
     strategy:
       matrix:
         include:
-          - context: serving
+          - context: .
+            dockerfile: serving/Dockerfile
             image: api
-          - context: dashboard
+          - context: .
+            dockerfile: dashboard/Dockerfile
             image: dashboard
           - context: infra/mlflow
+            dockerfile: Dockerfile
             image: mlflow
     steps:
       - uses: actions/checkout@v4
@@ -45,6 +48,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ${{ matrix.context }}
+          file: ${{ matrix.context }}/${{ matrix.dockerfile }}
           push: true
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-${{ matrix.image }}:${{ github.sha }}

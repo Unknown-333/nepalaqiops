@@ -24,7 +24,7 @@ BASE_URL = "https://api.waqi.info"
 # Discovered via: https://api.waqi.info/search/?keyword=kathmandu&token=...
 # Note: @8646, @11367, @12350 confirmed working via feed endpoint.
 # Search shows @9468, @10495, @14868, @14866, @13592 but their feed returns "can not connect".
-KATHMANDU_STATIONS = {
+KATHMANDU_STATIONS: dict[str, dict[str, Any]] = {
     "@8646": {"name": "kathmandu_ratnapark", "lat": 27.7030, "lon": 85.3135},
     "@11367": {"name": "kathmandu_us_embassy", "lat": 27.7385, "lon": 85.3165},
     "@12350": {"name": "patan_pulchowk", "lat": 27.6588, "lon": 85.3247},

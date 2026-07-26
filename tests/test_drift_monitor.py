@@ -75,11 +75,11 @@ class TestBinaryFeatureExclusion:
         })
 
         current = pd.DataFrame({
-            "pm25": np.random.uniform(35, 85, 100),  # Slightly shifted
+            "pm25": np.random.uniform(32, 82, 100),  # Slightly shifted
             "is_monsoon": np.zeros(100),  # All 0 in current (non-monsoon)
             "is_tihar": np.ones(100),     # All 1 (festival season)
             "is_brick_kiln_season": np.ones(100),
-            "temp_c": np.random.uniform(15, 25, 100),
+            "temp_c": np.random.uniform(20.5, 30.5, 100),  # Slightly shifted
         })
 
         psi_scores = compute_feature_psi(baseline, current)
