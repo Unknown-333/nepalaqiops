@@ -7,7 +7,7 @@ Includes FallbackCache for resilience when Redis/MLflow are unreachable.
 import logging
 import os
 from datetime import datetime, timezone
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 
@@ -111,7 +111,7 @@ class ModelStore:
                     port=int(os.getenv("REDIS_PORT", "6379")),
                     decode_responses=True,
                 )
-            cached = r.get(f"features:{station_id}:latest")
+            cached = cast("str | None", r.get(f"features:{station_id}:latest"))
             if cached:
                 features = json.loads(cached)
                 last_pm25 = features.get("pm25", 50.0) or 50.0

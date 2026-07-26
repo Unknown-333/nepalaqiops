@@ -5,6 +5,7 @@ Forecast endpoints — PM2.5 predictions and heatmap.
 import json
 import os
 from datetime import datetime, timedelta, timezone
+from typing import cast
 
 import redis
 from fastapi import APIRouter, Header, HTTPException, Query, Request
@@ -54,7 +55,7 @@ async def get_heatmap(request: Request):
         features = []
         for ward_id in range(1, 33):
             key = f"features:ward_{ward_id}:latest"
-            data = r.get(key)
+            data = cast("str | None", r.get(key))
 
             if data:
                 ward_data = json.loads(data)

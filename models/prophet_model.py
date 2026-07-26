@@ -38,7 +38,12 @@ class ProphetAQModel:
     def prepare_data(self, df: pd.DataFrame) -> pd.DataFrame:
         """Prepare data in Prophet format (ds, y, regressors)."""
         prophet_df = pd.DataFrame()
-        prophet_df["ds"] = pd.to_datetime(df["timestamp_utc"])
+        # Prophet requires timezone-naive timestamps; feature-store data is
+        # tz-aware UTC, so normalize to UTC and drop the timezone.
+        ds = pd.to_datetime(df["timestamp_utc"])
+        if ds.dt.tz is not None:
+            ds = ds.dt.tz_convert("UTC").dt.tz_localize(None)
+        prophet_df["ds"] = ds
         prophet_df["y"] = df["pm25"].values
 
         for reg in self.regressors:
