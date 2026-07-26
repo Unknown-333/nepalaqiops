@@ -150,9 +150,6 @@ def check_2_lstm_vs_naive():
         data = resp.json()
         predictions = np.array([f["pm25_predicted"] for f in data["forecasts"]])
 
-        # Naive baseline: repeat last known value
-        naive_baseline = np.full(24, last_pm25)
-
         # Compute metrics
         pred_std = np.std(predictions)
         # Since we don't have actual future values yet, compare prediction variance
@@ -228,8 +225,6 @@ def check_3_ensemble_superiority():
         lstm_weight = float(os.getenv("LSTM_WEIGHT", "0.6"))
         expected_ensemble = prophet_weight * prophet_preds + lstm_weight * lstm_preds
 
-        mse_prophet = np.mean((prophet_preds - ensemble_preds) ** 2)
-        mse_lstm = np.mean((lstm_preds - ensemble_preds) ** 2)
         consistency_error = np.mean(np.abs(ensemble_preds - expected_ensemble))
 
         if consistency_error < 1.0:
@@ -325,7 +320,7 @@ def check_5_drift_thresholds():
 
     try:
         import boto3
-        from botocore.exceptions import ClientError, NoCredentialsError
+        from botocore.exceptions import ClientError
 
         s3 = boto3.client(
             "s3",
@@ -356,7 +351,7 @@ def check_5_drift_thresholds():
             return
 
         # Get the latest report
-        latest = sorted(contents, key=lambda x: x["LastModified"], reverse=True)[0]
+        latest = max(contents, key=lambda x: x["LastModified"])
         last_modified = latest["LastModified"]
 
         # Check age

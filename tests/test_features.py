@@ -2,7 +2,7 @@
 Tests for feature engineering pipeline.
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 import numpy as np
 import pandas as pd
@@ -106,12 +106,12 @@ class TestCalendarFlags:
         calendar = CalendarFlags()
 
         # 2025 Tihar: October 20-24
-        tihar_date = datetime(2025, 10, 22, 12, 0)
+        tihar_date = datetime(2025, 10, 22, 12, 0, tzinfo=timezone.utc)
         flags = calendar.get_flags_for_date(tihar_date)
         assert flags["is_tihar"] is True
 
         # Non-Tihar date
-        normal_date = datetime(2025, 6, 15, 12, 0)
+        normal_date = datetime(2025, 6, 15, 12, 0, tzinfo=timezone.utc)
         flags = calendar.get_flags_for_date(normal_date)
         assert flags["is_tihar"] is False
 
@@ -122,13 +122,13 @@ class TestCalendarFlags:
         calendar = CalendarFlags()
 
         # July = monsoon
-        monsoon_date = datetime(2025, 7, 15, 12, 0)
+        monsoon_date = datetime(2025, 7, 15, 12, 0, tzinfo=timezone.utc)
         flags = calendar.get_flags_for_date(monsoon_date)
         assert flags["is_monsoon"] is True
         assert flags["is_pre_monsoon"] is False
 
         # April = pre-monsoon
-        pre_monsoon_date = datetime(2025, 4, 15, 12, 0)
+        pre_monsoon_date = datetime(2025, 4, 15, 12, 0, tzinfo=timezone.utc)
         flags = calendar.get_flags_for_date(pre_monsoon_date)
         assert flags["is_monsoon"] is False
         assert flags["is_pre_monsoon"] is True

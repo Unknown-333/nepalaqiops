@@ -107,7 +107,7 @@ class TestLSTMOutputShape:
         except ImportError:
             pytest.skip("LSTM model not importable")
 
-        df, features = self._make_features(200)
+        df, _ = self._make_features(200)
         if df is None:
             return
 

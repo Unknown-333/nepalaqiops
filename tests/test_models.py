@@ -91,7 +91,7 @@ class TestLSTMModel:
         train_df = df.iloc[:160]
         val_df = df.iloc[160:]
 
-        metrics = model.train(train_df, val_df)
+        model.train(train_df, val_df)
 
         # Test prediction shape
         prediction = model.predict(val_df)

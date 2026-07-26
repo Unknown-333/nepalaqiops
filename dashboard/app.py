@@ -3,7 +3,7 @@ NepalAQI-Ops Streamlit Dashboard — live AQI map, forecasts, SHAP explainabilit
 """
 
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 
 import numpy as np
 import pandas as pd
@@ -30,7 +30,7 @@ page = st.sidebar.radio(
 )
 
 
-def fetch_api(endpoint: str, params: dict = None) -> dict | None:
+def fetch_api(endpoint: str, params: dict | None = None) -> dict | None:
     """Fetch data from FastAPI backend."""
     try:
         response = requests.get(f"{FASTAPI_URL}{endpoint}", params=params, timeout=10)
@@ -151,7 +151,7 @@ elif page == "📈 24-Hour Forecast":
             y=upper + lower[::-1],
             fill="toself",
             fillcolor="rgba(0, 100, 200, 0.1)",
-            line=dict(color="rgba(255,255,255,0)"),
+            line={"color": "rgba(255,255,255,0)"},
             name="95% Confidence",
             showlegend=True,
         ))
@@ -162,7 +162,7 @@ elif page == "📈 24-Hour Forecast":
             y=predictions,
             mode="lines+markers",
             name=f"Forecast ({forecast_data['model_used']})",
-            line=dict(color="rgb(0, 100, 200)", width=2),
+            line={"color": "rgb(0, 100, 200)", "width": 2},
         ))
 
         # AQI threshold lines
@@ -231,7 +231,7 @@ elif page == "🧠 SHAP Explainability":
         title="SHAP Feature Contributions to Current PM2.5 Prediction",
         xaxis_title="Contribution (µg/m³)",
         height=450,
-        margin=dict(l=200),
+        margin={"l": 200},
     )
 
     st.plotly_chart(fig, use_container_width=True)
@@ -277,7 +277,7 @@ elif page == "📊 Model Health":
 
     # Model RMSE over time (simulated)
     st.subheader("Champion vs Challenger RMSE (Last 30 Days)")
-    dates = pd.date_range(end=datetime.now(), periods=30, freq="D")
+    dates = pd.date_range(end=datetime.now(tz=timezone.utc), periods=30, freq="D")
     champion_rmse = np.random.normal(12, 1.5, 30).cumsum() / np.arange(1, 31) + 10
     challenger_rmse = np.random.normal(11.5, 1.5, 30).cumsum() / np.arange(1, 31) + 9.5
 

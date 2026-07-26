@@ -6,7 +6,7 @@ import sys
 
 sys.path.insert(0, "/opt/airflow")
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from airflow.operators.python import BranchPythonOperator, PythonOperator
 
@@ -25,7 +25,7 @@ dag = DAG(
     default_args=default_args,
     description="Weekly model retraining with champion/challenger evaluation",
     schedule_interval="0 2 * * 0",  # Sunday 2am
-    start_date=datetime(2025, 1, 1),
+    start_date=datetime(2025, 1, 1, tzinfo=timezone.utc),
     catchup=False,
     tags=["training", "mlops"],
 )
@@ -169,7 +169,6 @@ def notify_telegram(**kwargs):
     ti = kwargs["ti"]
     best_model = ti.xcom_pull(key="best_model", task_ids="evaluate_models")
     best_rmse = ti.xcom_pull(key="best_rmse", task_ids="evaluate_models")
-    promoted = ti.xcom_pull(key="promoted", task_ids="promote_if_better")
     version = ti.xcom_pull(key="model_version", task_ids="promote_if_better")
 
     send_retrain_complete_alert(

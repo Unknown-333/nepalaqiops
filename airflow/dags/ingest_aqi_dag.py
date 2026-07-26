@@ -6,7 +6,7 @@ import sys
 
 sys.path.insert(0, "/opt/airflow")
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from airflow.operators.python import PythonOperator
 
@@ -25,7 +25,7 @@ dag = DAG(
     default_args=default_args,
     description="Hourly AQI data ingestion from OpenAQ v3 and AQICN",
     schedule_interval="@hourly",
-    start_date=datetime(2025, 1, 1),
+    start_date=datetime(2025, 1, 1, tzinfo=timezone.utc),
     catchup=False,
     tags=["ingestion", "aqi"],
 )

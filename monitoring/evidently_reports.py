@@ -63,7 +63,6 @@ def generate_training_reports(features_df: pd.DataFrame) -> dict[str, str]:
         from evidently.metric_preset import (
             DataDriftPreset,
             DataQualityPreset,
-            RegressionPreset,
         )
         from evidently.report import Report
     except ImportError:

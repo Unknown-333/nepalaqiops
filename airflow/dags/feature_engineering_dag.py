@@ -7,7 +7,8 @@ import sys
 
 sys.path.insert(0, "/opt/airflow")
 
-from datetime import datetime, timedelta
+import math
+from datetime import datetime, timedelta, timezone
 
 from airflow.operators.python import PythonOperator
 from airflow.sensors.external_task import ExternalTaskSensor
@@ -27,7 +28,7 @@ dag = DAG(
     default_args=default_args,
     description="Hourly feature computation after ingestion",
     schedule_interval="@hourly",
-    start_date=datetime(2025, 1, 1),
+    start_date=datetime(2025, 1, 1, tzinfo=timezone.utc),
     catchup=False,
     tags=["features", "engineering"],
 )
@@ -140,7 +141,7 @@ def write_feature_store(**kwargs):
         for k, v in latest.items():
             if hasattr(v, "isoformat"):
                 latest[k] = v.isoformat()
-            elif isinstance(v, float) and (v != v):  # NaN check
+            elif isinstance(v, float) and math.isnan(v):  # NaN check
                 latest[k] = None
 
         redis_key = f"features:{station_id}:latest"

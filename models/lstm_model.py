@@ -112,7 +112,6 @@ class LSTMAQModel:
 
         # Create sequences
         X, y = [], []
-        pm25_idx = available_features.index("pm25") if "pm25" in available_features else 0
 
         for i in range(len(scaled_data) - self.sequence_length - self.forecast_horizon + 1):
             X.append(scaled_data[i:i + self.sequence_length])

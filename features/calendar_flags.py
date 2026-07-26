@@ -64,7 +64,6 @@ class CalendarFlags:
 
         # Seasonal flags (vectorized)
         month = ts.dt.month
-        day = ts.dt.day
 
         df["is_monsoon"] = (month >= 6) & (month <= 9)
         df["is_pre_monsoon"] = (month >= 3) & (month <= 5)

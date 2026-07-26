@@ -1,0 +1,15 @@
+# Ruff configuration for NepalAQI-Ops.
+
+[lint]
+# BLE001 (blind-except): broad `except Exception` is an intentional resilience
+# pattern across the ingestion pipelines, model loaders, monitoring, and
+# operational scripts. External APIs, ML frameworks, and optional dependencies
+# fail in many unpredictable ways, and these paths deliberately degrade
+# gracefully (log + fallback) rather than crash a DAG task or the serving
+# process. This is a conscious project convention, so the rule is disabled.
+ignore = ["BLE001"]
+
+[lint.per-file-ignores]
+# Tests intentionally swallow transient errors while polling for eventual state
+# (e.g. waiting for a background pipeline to populate a store).
+"tests/**" = ["S110"]

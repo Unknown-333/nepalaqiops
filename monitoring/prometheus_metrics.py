@@ -2,8 +2,6 @@
 Prometheus Metrics — custom metrics for NepalAQI-Ops observability.
 """
 
-import time
-
 from fastapi import FastAPI, Request, Response
 from prometheus_client import (
     CONTENT_TYPE_LATEST,
@@ -56,7 +54,6 @@ class PrometheusMiddleware(BaseHTTPMiddleware):
     """Middleware to track request latency and errors."""
 
     async def dispatch(self, request: Request, call_next):
-        start_time = time.time()
         response = None
         try:
             response = await call_next(request)

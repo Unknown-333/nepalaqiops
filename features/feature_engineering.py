@@ -170,7 +170,6 @@ class FeatureEngineer:
             "wind_dir_sin", "wind_dir_cos", "precip_mm",
             "pressure_hpa", "precip_6h_cumulative",
         ]
-        available_cols = [c for c in weather_cols if c in weather.columns]
 
         for col in weather_cols:
             if col in weather.columns:

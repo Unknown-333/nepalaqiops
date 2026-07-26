@@ -8,7 +8,7 @@ import sys
 sys.path.insert(0, "/opt/airflow")
 
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from airflow.operators.python import BranchPythonOperator, PythonOperator
 from airflow.operators.trigger_dagrun import TriggerDagRunOperator
@@ -36,7 +36,7 @@ dag = DAG(
     default_args=default_args,
     description="Daily drift detection — triggers retrain on degradation",
     schedule_interval="0 6 * * *",  # Daily at 6am
-    start_date=datetime(2025, 1, 1),
+    start_date=datetime(2025, 1, 1, tzinfo=timezone.utc),
     catchup=False,
     tags=["monitoring", "drift"],
 )
@@ -110,7 +110,7 @@ def check_drift_threshold(**kwargs):
     rmse_degraded = ti.xcom_pull(key="rmse_degraded", task_ids="compute_rmse_drift")
 
     # Check if today falls within a known festival/event period
-    execution_date = kwargs.get("execution_date", datetime.now())
+    execution_date = kwargs.get("execution_date", datetime.now(tz=timezone.utc))
     is_festival_period = _is_festival_or_event(execution_date)
 
     # Adjust threshold for festivals
@@ -174,10 +174,7 @@ def _is_festival_or_event(date) -> bool:
         return True
 
     # Indra Jatra: typically September 1-10
-    if month == 9 and day <= 10:
-        return True
-
-    return False
+    return month == 9 and day <= 10
 
 
 def log_ok_status(**kwargs):

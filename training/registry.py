@@ -107,8 +107,6 @@ class ModelRegistry:
         try:
             versions = self.client.get_latest_versions(model_name, stages=["Archived"])
             for v in versions:
-                tags = {t.key: t.value for t in self.client.get_model_version(model_name, v.version).tags if hasattr(t, 'key')}
-                # Use the API to get tags
                 mv = self.client.get_model_version(model_name, v.version)
                 if mv.tags.get("role") == "challenger":
                     return v.version
